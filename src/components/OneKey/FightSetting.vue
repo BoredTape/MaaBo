@@ -91,14 +91,18 @@
       "
     >
       <el-form-item label="关卡">
-        <el-tooltip
-          class="box-item"
-          effect="dark"
-          content="不填刷上次关卡，可在关卡结尾输入Normal/Hard表示需要切换标准与磨难难度，剿灭作战，必须输入Annihilation"
-          placement="top"
+        <el-select
+          v-model="params.stage"
+          :disabled="userConfig!.status == 1 && params.enable"
+          :loading="StageLoading"
         >
-          <el-input v-model="params.stage" :disabled="userConfig!.status == 1 && params.enable" />
-        </el-tooltip>
+          <el-option
+            v-for="stage in stage_options"
+            :key="stage.value"
+            :label="stage.label"
+            :value="stage.value"
+          />
+        </el-select>
       </el-form-item>
       <el-form-item label="指定次数">
         <el-input-number
@@ -129,6 +133,8 @@ import { type FightTaskParams } from '@/stores/tasks/Fight'
 import { onMounted, ref } from 'vue'
 import GetFightItems from '@/apis/ItemIndex'
 import { type FightItem } from '@/apis/ItemIndex'
+import GetFightStages from '@/apis/FightStages'
+import { type StageItem } from '@/apis/FightStages'
 const userConfigStore = UserConfigStore()
 const dialogVisible = ref(userConfigStore.GetSettingDialogObj())
 const params = ref<FightTaskParams>(userConfigStore.GetTaskParams('Fight') as FightTaskParams)
@@ -168,7 +174,19 @@ const drops_set = () => {
   }
 }
 
+// Reactive data for stages
+const stage_options = ref<StageItem[]>([]);
+const StageLoading = ref(false);
+
+// Fetch stages data when needed
+const fetchStages = async () => {
+  StageLoading.value = true;
+  stage_options.value = await GetFightStages();
+  StageLoading.value = false;
+};
+
 onMounted(() => {
+  fetchStages();
   if (params.value.drops) {
     drops_value.value = Object.keys(params.value.drops)[0]
   }

@@ -5,7 +5,7 @@ mod payload;
 mod run;
 mod update;
 pub use config::{
-    delete_user_config, get_cli_config, get_item_index, get_user_configs, save_cli_config,
+    delete_user_config, get_cli_config, get_item_index, get_fight_stages, get_current_sidestory, get_user_configs, save_cli_config,
     save_core_config, save_task_config,
 };
 pub use init::init_process;

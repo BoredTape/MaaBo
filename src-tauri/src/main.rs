@@ -16,8 +16,8 @@ use tauri::{
 };
 
 use events::{
-    copilot, delete_user_config, get_cli_config, get_item_index, get_user_configs,
-    ignore_maa_cli_update, init_process, maa_cli_update_process, one_key, save_cli_config,
+    copilot, delete_user_config, get_cli_config, get_item_index, get_fight_stages, get_current_sidestory, 
+    get_user_configs, ignore_maa_cli_update, init_process, maa_cli_update_process, one_key, save_cli_config,
     save_core_config, save_task_config, stop,
 };
 
@@ -67,6 +67,8 @@ fn main() {
             ignore_maa_cli_update,
             maa_cli_update_process,
             get_item_index,
+            get_fight_stages,
+            get_current_sidestory,
             copilot
         ])
         .system_tray(tray)
