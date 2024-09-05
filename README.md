@@ -32,7 +32,7 @@
   - tasks文件使用`toml`格式，一个`tasks`文件对应一个`profiles`文件，如：`tasks/default.toml`对应一个`profiles/default.toml`
 - 不想用这个残缺品怎么办？
   - 删除包
-  - 删除`$HOME/.MaaBo/config`
+  - 删除`$HOME/.MaaBo`
 
 ## 路线图
 
