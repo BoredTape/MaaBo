@@ -56,8 +56,10 @@
     >
       <el-form-item label="指定材料">
         <el-select
-          :loading="selectLoading"
-          @visible-change="GetItem"
+          filterable
+          remote
+          :remote-method="fetchDrops"
+          :loading="dropsLoading"
           v-model="drops_value"
           :disabled="userConfig!.status == 1 && params.enable"
         >
@@ -92,7 +94,10 @@
     >
       <el-form-item label="关卡">
         <el-select
-          v-model="params.stage"
+          filterable
+          remote
+          :remote-method="fetchStages"
+          v-model="stage_value"
           :disabled="userConfig!.status == 1 && params.enable"
           :loading="StageLoading"
         >
@@ -142,6 +147,9 @@ const userConfig = ref(userConfigStore.GetConfig(userConfigStore.selectedConfig)
 
 const saveSetting = () => {
   drops_set()
+  if (stage_value.value !== 'NotSpecified') {
+    params.value.stage = stage_value.value
+  }
   if (userConfig.value!.status === 0) {
     userConfigStore.SaveTask()
   }
@@ -150,14 +158,19 @@ const saveSetting = () => {
 
 const drops_value = ref('NotSpecified')
 const drops_times = ref(1)
-const drops_options = ref<FightItem[]>()
-const selectLoading = ref(false)
-const GetItem = async (visible: boolean) => {
-  if (visible) {
-    selectLoading.value = true
-    drops_options.value = await GetFightItems()
-    selectLoading.value = false
+const drops_options = ref<FightItem[]>([])
+const dropsLoading = ref(false)
+const fetchDrops = async (query: string) => {
+  dropsLoading.value = true
+  const fight_items = await GetFightItems()
+  if (query !== '') {
+    drops_options.value = fight_items.filter((item) => {
+      return item.label.includes(query)
+    })
+  } else {
+    drops_options.value = fight_items
   }
+  dropsLoading.value = false
 }
 
 const drops_set = () => {
@@ -175,20 +188,34 @@ const drops_set = () => {
 }
 
 // Reactive data for stages
-const stage_options = ref<StageItem[]>([]);
-const StageLoading = ref(false);
+const stage_options = ref<StageItem[]>([])
+const StageLoading = ref(false)
+const stage_value = ref('NotSpecified')
 
 // Fetch stages data when needed
-const fetchStages = async () => {
-  StageLoading.value = true;
-  stage_options.value = await GetFightStages();
-  StageLoading.value = false;
-};
+const fetchStages = async (query: string) => {
+  StageLoading.value = true
+  const fight_stages = await GetFightStages()
+  if (query !== '') {
+    stage_options.value = fight_stages.filter((item) => {
+      return item.label.includes(query)
+    })
+  } else {
+    stage_options.value = fight_stages
+  }
+  StageLoading.value = false
+}
 
 onMounted(() => {
-  fetchStages();
+  // 如果不加这个，重新打开的时候不能正常读取label
+  fetchDrops('')
+  fetchStages('')
+
   if (params.value.drops) {
-    drops_value.value = Object.keys(params.value.drops)[0]
+    drops_value.value = Object.keys(params.value.drops!)[0]
+  }
+  if (params.value.stage !== '') {
+    stage_value.value = params.value.stage
   }
 })
 </script>
