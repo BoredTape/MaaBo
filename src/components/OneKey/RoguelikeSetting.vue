@@ -23,6 +23,7 @@
               <el-option label="傀影与猩红血钻" value="Phantom" default />
               <el-option label="水月与深蓝之树" value="Mizuki" />
               <el-option label="探索者的银凇止境" value="Sami" />
+              <el-option label="萨卡兹的无终奇语" value="Sarkaz" />
             </el-select>
           </el-form-item>
           <el-form-item label="开始探索次数">
@@ -40,7 +41,7 @@
               @change="modeChange"
               :disabled="userConfig!.status == 1 && params.enable"
             >
-              <el-option label="刷蜡烛" :value="0" default />
+              <el-option label="刷蜡烛/通关" :value="0" default />
               <el-option label="刷源石锭" :value="1" />
               <el-option label="刷开局" :value="4" />
               <el-option label="刷坍缩范式" :value="5" />

@@ -157,3 +157,21 @@ pub fn get_item_index() -> payload::Payload<serde_json::Value> {
     let data =serde_json::from_str(&item_index_str).unwrap_or_else(|err| panic!("读取{}失败:{}",maa_cli::data_dir().join(&"resource").join(&"item_index.json").to_str().unwrap(), err.to_string()));
     payload::new(consts::SUCCESS, "success".to_string(), data)
 }
+
+#[tauri::command]
+pub fn get_fight_stages() -> payload::Payload<serde_json::Value> {
+    let fight_stages_str =
+            fs::read_to_string(maa_cli::data_dir().join(&"resource").join(&"stages.json"))
+                .unwrap_or_else(|err| panic!("读取{}失败:{}",maa_cli::data_dir().join(&"resource").join(&"stages.json").to_str().unwrap(), err.to_string()));
+    let data =serde_json::from_str(&fight_stages_str).unwrap_or_else(|err| panic!("读取{}失败:{}",maa_cli::data_dir().join(&"resource").join(&"stages").to_str().unwrap(), err.to_string()));
+    payload::new(consts::SUCCESS, "success".to_string(), data)
+}
+
+#[tauri::command]
+pub fn get_current_sidestory() -> payload::Payload<serde_json::Value> {
+    let sidestory_stages_str =
+            fs::read_to_string(maa_cli::data_dir().join(&"MaaResource").join(&"cache").join(&"resource").join(&"tasks.json"))
+                .unwrap_or_else(|err| panic!("读取{}失败:{}",maa_cli::data_dir().join(&"MaaResource").join(&"cache").join(&"resource").join(&"tasks.json").to_str().unwrap(), err.to_string()));
+    let data =serde_json::from_str(&sidestory_stages_str).unwrap_or_else(|err| panic!("读取{}失败:{}",maa_cli::data_dir().join(&"MaaResource").join(&"cache").join(&"resource").join(&"tasks.json").to_str().unwrap(), err.to_string()));
+    payload::new(consts::SUCCESS, "success".to_string(), data)
+}
