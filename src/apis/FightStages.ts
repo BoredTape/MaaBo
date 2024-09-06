@@ -23,7 +23,7 @@ const StageExtraSuffix = {
 }
 
 const currentStages: StageItem[] = [
-    { label: '当前关卡/上次作战', value: '' },
+    { label: '当前关卡/上次作战', value: 'NotSpecified' },
 ]
 
 const appendSuffixAndCreateItems = (stage: any, suffix: string) => {
@@ -49,7 +49,7 @@ const basicSupportStages: StageItem[] = [
     { label: '辅助/先锋-大', value: 'PR-C-2' },
     { label: '特种/近卫-小', value: 'PR-D-1' },
     { label: '特种/近卫-大', value: 'PR-D-2' },
-  ]
+]
 
 function filterSideStoryStages(sideStoryData: Record<string, any>): StageItem[] {
     const stageItems: StageItem[] = [];
@@ -72,7 +72,7 @@ const GetFightStages = async (): Promise<StageItem[]> => {
     try {
         const result = await invoke<Payload>('get_fight_stages');
         const sideStoryData = await invoke<Payload>('get_current_sidestory');
-        
+
         const filteredStages = result.data
             .filter(stage => stage.stageId.includes('main') || stage.stageId.includes('sub'))
             .flatMap(stage => {
@@ -93,7 +93,7 @@ const GetFightStages = async (): Promise<StageItem[]> => {
         const filteredSideStoryStages = filterSideStoryStages(sideStoryData.data);
 
         // 合并全部可选关卡
-        return [...currentStages, ...filteredSideStoryStages,...basicSupportStages, ...filteredStages];
+        return [...currentStages, ...filteredSideStoryStages, ...basicSupportStages, ...filteredStages];
     } catch (error) {
         console.error('Failed to retrieve fight stages:', error);
         return [];
