@@ -200,7 +200,7 @@ pub fn init_process(tx: Sender<(i32, String)>) {
         });
     }
 
-    maa_utils::get_current_version().unwrap_or_else(|error| {
+    let (maa_cli_version, _) = maa_utils::get_current_version().unwrap_or_else(|error| {
         tx.send((
             pconsts::SUCCESS,
             format!("获取MAA CLI本地版本失败:\n{}", error.to_string()),
@@ -209,11 +209,20 @@ pub fn init_process(tx: Sender<(i32, String)>) {
         panic!("获取MAA CLI本地版本失败");
     });
 
+    version::set_maa_cli_current_version(&maa_cli_version).unwrap_or_else(|error| {
+        tx.send((
+            pconsts::SUCCESS,
+            format!("设置MAA CLI本地版本失败:\n{}", error.to_string()),
+        ))
+        .unwrap_or_else(|err| log::error!("{}", err.to_string()));
+        panic!("设置MAA CLI本地版本失败");
+    });
     let core_lib_dir = maa_utils::core_lib_dir();
     if !core_lib_dir.exists() || !core_lib_dir.join(maa_utils::core_lib_name()).exists() {
         tx.send((pconsts::SUCCESS, "安装MAA CORE".to_string()))
             .unwrap_or_else(|err| log::error!("{}", err.to_string()));
         if let Err(error_msg) = maa_utils::install_maa_core() {
+            log::error!("安装MAA CORE失败,错误:{}", error_msg.to_string());
             tx.send((pconsts::ERROR, error_msg.to_string()))
                 .unwrap_or_else(|err| log::error!("{}", err.to_string()));
         }
@@ -224,6 +233,7 @@ pub fn init_process(tx: Sender<(i32, String)>) {
 
     let mut maa_update_msg = (pconsts::SUCCESS, "更新资源成功".to_string());
     if let Err(error_msg) = maa_utils::maa_update() {
+        log::error!("更新资源失败{}", error_msg.to_string());
         maa_update_msg = (pconsts::ERROR, error_msg.to_string());
     }
     tx.send(maa_update_msg)
@@ -233,6 +243,7 @@ pub fn init_process(tx: Sender<(i32, String)>) {
     loop {
         if !version::get_maa_cli_ignore_update() {
             maa_utils::get_remote_version_info().unwrap_or_else(|error| {
+                log::error!("获取MAA CLI远程更新信息失败:\n{}", error.to_string());
                 tx.send((
                     pconsts::ERROR,
                     format!("获取MAA CLI远程更新信息失败:\n{}", error.to_string()),
@@ -250,6 +261,7 @@ pub fn init_process(tx: Sender<(i32, String)>) {
         }
         thread::sleep(Duration::from_secs(3600));
         if let Err(error_msg) = maa_utils::maa_hot_update() {
+            log::error!("资源热更新失败,错误:{}", error_msg.to_string());
             maa_hot_update_msg = (
                 pconsts::ERROR,
                 format!("资源热更新失败,错误:{}", error_msg.to_string()),

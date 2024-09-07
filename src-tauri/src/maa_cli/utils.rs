@@ -155,7 +155,7 @@ fn command_result(command: Result<(os_pipe::PipeReader, Child), Error>) -> Resul
     Ok(result)
 }
 
-pub fn get_current_version() -> Result<(), CError> {
+pub fn get_current_version() -> Result<(String, String), CError> {
     let (mut reader, _) = cli_command(&"", vec!["version"]).unwrap();
     let mut cmd_text = String::new();
     if let Err(error) = reader.read_to_string(&mut cmd_text) {
@@ -163,10 +163,12 @@ pub fn get_current_version() -> Result<(), CError> {
     }
 
     let text_array: Vec<&str> = cmd_text.split("\n").collect();
-    if text_array.len() < 1 {
+    if text_array.len() < 2 {
         return Err(CError::MaaCliLocalVersionError("".to_string()));
     }
-    version::set_maa_cli_current_version(&text_array[0].replace("maa-cli v", ""))
+    let maa_cli_version = &text_array[0].replace("maa-cli v", "");
+    let maa_core_version = &text_array[1].replace("MaaCore v", "");
+    return Ok((maa_cli_version.to_string(), maa_core_version.to_string()));
 }
 
 #[derive(Debug, Serialize, Deserialize)]
