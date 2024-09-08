@@ -1,9 +1,9 @@
 use serde::Serialize;
 
-use crate::consts as pconsts;
-use crate::events::consts;
+use crate::consts;
 use crate::events::payload;
 use crate::maa_cli;
+use crate::utils;
 
 #[derive(Debug, Clone, Serialize)]
 pub struct VersionInfo {
@@ -32,31 +32,27 @@ pub fn version_info() -> payload::Payload<VersionInfo> {
         tauri: tauri::VERSION.to_string(),
         webview: wv_version,
     };
-    payload::new(pconsts::SUCCESS, "success".to_string(), info)
+    payload::new(consts::SUCCESS, "success".to_string(), info)
+}
+
+#[derive(Debug, Clone, Serialize)]
+pub struct CheckUpdateData {
+    require_update: bool,
+    from: String,
+    to: String,
 }
 
 #[tauri::command]
-pub fn maabo_online_version() -> payload::Payload<()> {
-    let client = reqwest::blocking::Client::new();
-    let request = client
-        .request(reqwest::Method::GET, consts::MAABO_ONLINE_VERSION_URL)
-        .header("User-Agent", consts::REQUEST_QA);
-    let version_info = match request.send() {
-        Ok(resp) => match resp.json::<serde_json::Value>() {
-            Ok(json_value) => json_value["tag_name"]
-                .as_str()
-                .unwrap_or("0.0.0")
-                .to_string(),
-            Err(error) => {
-                log::info!("获取maabo在线版本失败(format json)\n{}", error.to_string());
-                "0.0.0".to_string()
-            }
-        },
-        Err(error) => {
-            log::info!("获取maabo在线版本失败\n{}", error.to_string());
-            "0.0.0".to_string()
-        }
+pub fn check_update() -> payload::Payload<CheckUpdateData> {
+    let online_version = semver::Version::parse(&utils::fetch_online_version())
+        .unwrap_or_else(|_| semver::Version::parse(&"0.0.0").unwrap());
+    let current_version = semver::Version::parse(env!("CARGO_PKG_VERSION"))
+        .unwrap_or_else(|_| semver::Version::parse(&"0.0.0").unwrap());
+
+    let resp_data = CheckUpdateData {
+        require_update: online_version > current_version,
+        from: current_version.to_string(),
+        to: online_version.to_string(),
     };
-    println!("{}", &version_info);
-    payload::new_empty(pconsts::SUCCESS, version_info)
+    payload::new(consts::SUCCESS, "success".to_string(), resp_data)
 }

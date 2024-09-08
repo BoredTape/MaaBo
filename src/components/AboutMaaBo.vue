@@ -32,16 +32,16 @@
       <el-col>
         <el-space wrap>
           <el-tag type="primary" effect="dark">MaaBo版本: {{ version_info?.maabo }}</el-tag>
-          <el-tag type="primary" effect="dark" v-show="need_update">
+          <el-tag type="primary" effect="dark" v-show="require_update">
             最新版本: {{ online_version }}
           </el-tag>
-          <el-button plain @click="checkUpdate" v-show="!need_update">检查更新</el-button>
+          <el-button plain @click="checkUpdate" v-show="!require_update">检查更新</el-button>
           <el-button
             plain
             @click="open('https://github.com/BoredTape/MaaBo/releases/latest')"
-            v-show="need_update"
+            v-show="require_update"
           >
-            打开下载页面
+            打开下载页
           </el-button>
         </el-space>
       </el-col>
@@ -60,21 +60,18 @@
 </template>
 
 <script setup lang="ts">
-import { GetVersionInfo, type VersionInfo, GetMaaBoOnlineVersion } from '@/apis/Version'
+import { GetVersionInfo, type VersionInfo, CheckMaaBoUpdate } from '@/apis/Version'
 import { onMounted, ref } from 'vue'
-import { compare } from 'compare-versions'
 import { open } from '@tauri-apps/api/shell'
 
 const version_info = ref<VersionInfo>()
+
 const online_version = ref('')
-const need_update = ref(false)
+const require_update = ref(false)
 const checkUpdate = async () => {
-  online_version.value = await GetMaaBoOnlineVersion()
-  console.log(online_version.value)
-  console.log(version_info.value!.maabo)
-  if (compare(online_version.value, version_info.value!.maabo, '>')) {
-    need_update.value = true
-  }
+  const checkUpdateData = await CheckMaaBoUpdate()
+  require_update.value = checkUpdateData.require_update
+  online_version.value = checkUpdateData.to
 }
 
 onMounted(async () => {

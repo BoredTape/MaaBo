@@ -10,28 +10,32 @@ interface VersionInfo {
     webview: string
 }
 
+interface CheckUpdateData {
+    require_update: boolean
+    from: string
+    to: string
+}
+
 interface Payload {
     code: number
     msg: string
-    data?: VersionInfo
+    data: VersionInfo | CheckUpdateData
 }
 
 const GetVersionInfo = async (): Promise<VersionInfo> => {
     let response: any
     await invoke('version_info').then((res) => {
         response = (res as Payload).data
-
     })
     return response as VersionInfo
 }
 
-const GetMaaBoOnlineVersion = async (): Promise<string> => {
+const CheckMaaBoUpdate = async (): Promise<CheckUpdateData> => {
     let response: any
-    await invoke('maabo_online_version').then((res) => {
-        response = (res as Payload).msg
-        console.log(res)
+    await invoke('check_update').then((res) => {
+        response = (res as Payload).data
     })
-    return response as string
+    return response as CheckUpdateData
 }
 
-export { GetVersionInfo, type VersionInfo, type Payload, GetMaaBoOnlineVersion }
+export { GetVersionInfo, type VersionInfo, type CheckUpdateData, CheckMaaBoUpdate }
