@@ -16,12 +16,24 @@ use tauri::{
 };
 
 use events::{
-    copilot, delete_user_config, get_cli_config, get_item_index, get_user_configs,
-    ignore_maa_cli_update, init_process, maa_cli_update_process, one_key, save_cli_config,
-    save_core_config, save_task_config, stop,
+    check_update, copilot, delete_user_config, get_cli_config, get_current_sidestory,
+    get_fight_stages, get_item_index, get_user_configs, ignore_maa_cli_update, init_process,
+    maa_cli_update_process, one_key, save_cli_config, save_core_config, save_task_config, stop,
+    version_info,
 };
 
 fn main() {
+    // 临时解决方案-start
+    // n卡会白屏，WebKit新版的渲染器与nvidia驱动暂时还不兼容导致
+    // 使用env WEBKIT_DISABLE_DMABUF_RENDERER=1可以退回旧版渲染器解决问题
+    // 比env WEBKIT_DISABLE_COMPOSITING_MODE=1直接禁用硬件加速好
+    // 感谢 @Darkatse
+    // 详情：https://github.com/BoredTape/MaaBo/pull/1#issuecomment-2333454094
+    if std::env::consts::OS == "linux" {
+        std::env::set_var("WEBKIT_DISABLE_DMABUF_RENDERER", "1");
+    }
+    // 临时解决方案-end
+
     let maa_bo_dir = maa_cli::dir();
     if !maa_bo_dir.exists() {
         utils::make_dir_exist(&maa_bo_dir).unwrap();
@@ -67,7 +79,11 @@ fn main() {
             ignore_maa_cli_update,
             maa_cli_update_process,
             get_item_index,
-            copilot
+            get_fight_stages,
+            get_current_sidestory,
+            copilot,
+            version_info,
+            check_update
         ])
         .system_tray(tray)
         .on_system_tray_event(|app, event| match event {
