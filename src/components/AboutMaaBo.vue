@@ -1,6 +1,6 @@
 <template>
   <main>
-    <el-scrollbar height="340px" style="margin-bottom: 5px">
+    <el-scrollbar height="315px" style="margin-bottom: 5px">
       <h1 style="text-align: center">MaaBo</h1>
 
       <blockquote>
