@@ -99,7 +99,6 @@ const uri = ref('')
 const autoFormation = ref(false)
 const scrollbarRef = ref<InstanceType<typeof ElScrollbar>>()
 const changeText = () => {
-  console.log()
   const container = scrollbarRef.value!.$el.querySelector('.el-scrollbar__wrap')
   container.style.scrollBehavior = 'smooth'
   container.scrollTop = container.scrollHeight

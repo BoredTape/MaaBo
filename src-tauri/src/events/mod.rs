@@ -12,4 +12,4 @@ pub use config::{
 pub use init::init_process;
 pub use run::{copilot, one_key, stop};
 pub use update::{ignore_maa_cli_update, maa_cli_update_process};
-pub use version::{maabo_online_version, version_info};
+pub use version::{check_update, version_info};
