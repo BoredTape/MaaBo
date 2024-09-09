@@ -47,7 +47,7 @@ declare module 'vue' {
     MaaOneKey: typeof import('./src/components/MaaOneKey.vue')['default']
     MallSetting: typeof import('./src/components/OneKey/MallSetting.vue')['default']
     NaviLayout: typeof import('./src/components/layout/NaviLayout.vue')['default']
-    ReclamationAlgorithmSetting: typeof import('./src/components/OneKey/ReclamationAlgorithmSetting.vue')['default']
+    ReclamationSetting: typeof import('./src/components/OneKey/ReclamationSetting.vue')['default']
     RecruitSetting: typeof import('./src/components/OneKey/RecruitSetting.vue')['default']
     RoguelikeSetting: typeof import('./src/components/OneKey/RoguelikeSetting.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']

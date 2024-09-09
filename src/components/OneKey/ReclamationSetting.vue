@@ -1,6 +1,6 @@
 <template>
   <el-dialog
-    v-model="dialogVisible['ReclamationAlgorithm']"
+    v-model="dialogVisible['Reclamation']"
     title="生息演算设置"
     center
     align-center
@@ -14,8 +14,8 @@
     >
       <el-form-item label="主题">
         <el-select v-model="params.theme" :disabled="userConfig!.status == 1 && params.enable">
-          <el-option label="沙中之火" :value="0" default />
-          <el-option label="沙洲遗闻" :value="1" />
+          <el-option label="沙中之火" value="Fire" default />
+          <el-option label="沙洲遗闻" value="Tales" />
         </el-select>
       </el-form-item>
 
@@ -28,8 +28,28 @@
 
       <el-form-item label="自动制造的物品">
         <el-input
-          v-model="params.product"
+          v-model="params.tool_to_craft"
           :disabled="(userConfig!.status == 1 && params.enable) || params.mode == 0"
+        />
+      </el-form-item>
+
+      <el-form-item label="点击类型">
+        <el-select
+          v-model="params.increment_mode"
+          :disabled="userConfig!.status == 1 && params.enable"
+        >
+          <el-option label="连点" :value="0" default />
+          <el-option label="长按" :value="1" />
+        </el-select>
+      </el-form-item>
+
+      <el-form-item label="单次最大制造轮数">
+        <el-input-number
+          style="width: auto"
+          v-model="params.num_craft_batches"
+          :min="1"
+          controls-position="right"
+          :disabled="userConfig!.status == 1 && params.enable"
         />
       </el-form-item>
     </el-form>
@@ -38,20 +58,20 @@
 </template>
 
 <script setup lang="ts">
-import { type ReclamationAlgorithmTaskParams } from '@/stores/tasks/ReclamationAlgorithm'
+import { type ReclamationTaskParams } from '@/stores/tasks/Reclamation'
 import { UserConfigStore } from '@/stores/UserConfig'
 import { ref } from 'vue'
 const userConfigStore = UserConfigStore()
 const userConfig = ref(userConfigStore.GetConfig(userConfigStore.selectedConfig))
 const dialogVisible = ref(userConfigStore.GetSettingDialogObj())
-const params = ref<ReclamationAlgorithmTaskParams>(
-  userConfigStore.GetTaskParams('ReclamationAlgorithm') as ReclamationAlgorithmTaskParams
+const params = ref<ReclamationTaskParams>(
+  userConfigStore.GetTaskParams('Reclamation') as ReclamationTaskParams
 )
 const saveSetting = () => {
   if (userConfig.value!.status === 0) {
     userConfigStore.SaveTask()
   }
-  dialogVisible.value['ReclamationAlgorithm'] = false
+  dialogVisible.value['Reclamation'] = false
 }
 </script>
 
