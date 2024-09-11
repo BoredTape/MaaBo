@@ -52,7 +52,6 @@ declare module 'vue' {
     NaviLayout: typeof import('./src/components/layout/NaviLayout.vue')['default']
     OperBoxTool: typeof import('./src/components/tools/OperBoxTool.vue')['default']
     ReclamationSetting: typeof import('./src/components/OneKey/ReclamationSetting.vue')['default']
-    RecruitmentRecognition: typeof import('./src/components/tools/RecruitmentRecognition.vue')['default']
     RecruitSetting: typeof import('./src/components/OneKey/RecruitSetting.vue')['default']
     RecruitTool: typeof import('./src/components/tools/RecruitTool.vue')['default']
     RoguelikeSetting: typeof import('./src/components/OneKey/RoguelikeSetting.vue')['default']
