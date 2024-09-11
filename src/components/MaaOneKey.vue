@@ -114,7 +114,7 @@
     <RecruitSetting />
     <AwardSetting />
     <RoguelikeSetting />
-    <ReclamationAlgorithmSetting />
+    <ReclamationSetting />
   </div>
 </template>
 

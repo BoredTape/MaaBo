@@ -6,6 +6,7 @@ mod errors;
 mod events;
 mod logger;
 mod maa_cli;
+mod migration;
 mod status;
 mod utils;
 mod version;
@@ -23,6 +24,9 @@ use events::{
 };
 
 fn main() {
+    // 对配置项迁移，临时解决方案，后面可能会改
+    migration::execute();
+
     // 临时解决方案-start
     // n卡会白屏，WebKit新版的渲染器与nvidia驱动暂时还不兼容导致
     // 使用env WEBKIT_DISABLE_DMABUF_RENDERER=1可以退回旧版渲染器解决问题

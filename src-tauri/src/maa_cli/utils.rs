@@ -496,13 +496,15 @@ type = "Roguelike"
 
 [[tasks]]
 name = "生息演算"
-type = "ReclamationAlgorithm"
+type = "Reclamation"
 
   [tasks.params]
   enable = true
-  theme = 1
+  theme = "Tales"
   mode = 0
-  product = "荧光棒"
+  tool_to_craft = "荧光棒"
+  increment_mode = 0
+  num_craft_batches = 16
 "#;
     if fs::write(
         task_dir().join(default_task_name()).to_str().unwrap(),
