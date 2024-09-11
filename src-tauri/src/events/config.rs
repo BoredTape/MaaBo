@@ -148,30 +148,125 @@ pub fn delete_user_config(name: String) -> payload::Payload<()> {
     return payload::new_empty(consts::SUCCESS, "success".to_string());
 }
 
-
 #[tauri::command]
 pub fn get_item_index() -> payload::Payload<serde_json::Value> {
-    let item_index_str =
-            fs::read_to_string(maa_cli::data_dir().join(&"resource").join(&"item_index.json"))
-                .unwrap_or_else(|err| panic!("读取{}失败:{}",maa_cli::data_dir().join(&"resource").join(&"item_index.json").to_str().unwrap(), err.to_string()));
-    let data =serde_json::from_str(&item_index_str).unwrap_or_else(|err| panic!("读取{}失败:{}",maa_cli::data_dir().join(&"resource").join(&"item_index.json").to_str().unwrap(), err.to_string()));
+    let item_index_str = fs::read_to_string(
+        maa_cli::data_dir()
+            .join(&"resource")
+            .join(&"item_index.json"),
+    )
+    .unwrap_or_else(|err| {
+        panic!(
+            "读取{}失败:{}",
+            maa_cli::data_dir()
+                .join(&"resource")
+                .join(&"item_index.json")
+                .to_str()
+                .unwrap(),
+            err.to_string()
+        )
+    });
+    let data = serde_json::from_str(&item_index_str).unwrap_or_else(|err| {
+        panic!(
+            "读取{}失败:{}",
+            maa_cli::data_dir()
+                .join(&"resource")
+                .join(&"item_index.json")
+                .to_str()
+                .unwrap(),
+            err.to_string()
+        )
+    });
     payload::new(consts::SUCCESS, "success".to_string(), data)
 }
 
 #[tauri::command]
 pub fn get_fight_stages() -> payload::Payload<serde_json::Value> {
     let fight_stages_str =
-            fs::read_to_string(maa_cli::data_dir().join(&"resource").join(&"stages.json"))
-                .unwrap_or_else(|err| panic!("读取{}失败:{}",maa_cli::data_dir().join(&"resource").join(&"stages.json").to_str().unwrap(), err.to_string()));
-    let data =serde_json::from_str(&fight_stages_str).unwrap_or_else(|err| panic!("读取{}失败:{}",maa_cli::data_dir().join(&"resource").join(&"stages").to_str().unwrap(), err.to_string()));
+        fs::read_to_string(maa_cli::data_dir().join(&"resource").join(&"stages.json"))
+            .unwrap_or_else(|err| {
+                panic!(
+                    "读取{}失败:{}",
+                    maa_cli::data_dir()
+                        .join(&"resource")
+                        .join(&"stages.json")
+                        .to_str()
+                        .unwrap(),
+                    err.to_string()
+                )
+            });
+    let data = serde_json::from_str(&fight_stages_str).unwrap_or_else(|err| {
+        panic!(
+            "读取{}失败:{}",
+            maa_cli::data_dir()
+                .join(&"resource")
+                .join(&"stages")
+                .to_str()
+                .unwrap(),
+            err.to_string()
+        )
+    });
     payload::new(consts::SUCCESS, "success".to_string(), data)
 }
 
 #[tauri::command]
 pub fn get_current_sidestory() -> payload::Payload<serde_json::Value> {
-    let sidestory_stages_str =
-            fs::read_to_string(maa_cli::data_dir().join(&"MaaResource").join(&"cache").join(&"resource").join(&"tasks.json"))
-                .unwrap_or_else(|err| panic!("读取{}失败:{}",maa_cli::data_dir().join(&"MaaResource").join(&"cache").join(&"resource").join(&"tasks.json").to_str().unwrap(), err.to_string()));
-    let data =serde_json::from_str(&sidestory_stages_str).unwrap_or_else(|err| panic!("读取{}失败:{}",maa_cli::data_dir().join(&"MaaResource").join(&"cache").join(&"resource").join(&"tasks.json").to_str().unwrap(), err.to_string()));
+    let sidestory_stages_str = fs::read_to_string(
+        maa_cli::data_dir()
+            .join(&"MaaResource")
+            .join(&"cache")
+            .join(&"resource")
+            .join(&"tasks.json"),
+    )
+    .unwrap_or_else(|err| {
+        panic!(
+            "读取{}失败:{}",
+            maa_cli::data_dir()
+                .join(&"MaaResource")
+                .join(&"cache")
+                .join(&"resource")
+                .join(&"tasks.json")
+                .to_str()
+                .unwrap(),
+            err.to_string()
+        )
+    });
+    let data = serde_json::from_str(&sidestory_stages_str).unwrap_or_else(|err| {
+        panic!(
+            "读取{}失败:{}",
+            maa_cli::data_dir()
+                .join(&"MaaResource")
+                .join(&"cache")
+                .join(&"resource")
+                .join(&"tasks.json")
+                .to_str()
+                .unwrap(),
+            err.to_string()
+        )
+    });
     payload::new(consts::SUCCESS, "success".to_string(), data)
+}
+
+#[derive(Debug, Clone, Serialize)]
+pub struct PathData {
+    maabo_dir: String,
+    maa_config_dir: String,
+    maa_data_dir: String,
+    maa_state_dir: String,
+    maa_cache_dir: String,
+}
+
+#[tauri::command(async)]
+pub fn get_path_info() -> payload::Payload<PathData> {
+    payload::new(
+        consts::SUCCESS,
+        "success".to_string(),
+        PathData {
+            maabo_dir: String::from(maa_cli::dir().to_str().unwrap()),
+            maa_config_dir: String::from(maa_cli::config_dir().to_str().unwrap()),
+            maa_data_dir: String::from(maa_cli::data_dir().to_str().unwrap()),
+            maa_state_dir: String::from(maa_cli::state_dir().to_str().unwrap()),
+            maa_cache_dir: String::from(maa_cli::cache_dir().to_str().unwrap()),
+        },
+    )
 }

@@ -13,9 +13,11 @@ import { invoke } from '@tauri-apps/api/tauri'
 import moment from 'moment'
 import { UserConfigStore } from '@/stores/UserConfig'
 import { MaaCliConfigStore } from '@/stores/MaaCLIConfig'
+import { PathInfoStore } from '@/stores/PathInfo'
 
 const userConfig = UserConfigStore()
 const cliConfig = MaaCliConfigStore()
+const pathInfo = PathInfoStore()
 
 const loadingText = ref('Loading')
 const loading = ElLoading.service({
@@ -47,6 +49,7 @@ const listen_init_msg = async () => {
 
       userConfig.Load()
 
+      pathInfo.Load()
       unlisten()
       loading.close()
       router.push('/oneKey')
