@@ -40,13 +40,51 @@ interface ToolsRunningTimeInfo {
     depot_penguin: DepotPenguin
     depot_arkntools: DepotArkntools
     oper_box_listen: UnlistenFn | null
-    oper_box_information: string[]
+    oper_box_information: string
+    oper_box_json: OperBoxJson
     video_recognition_listen: UnlistenFn | null
     video_recognition_information: string[]
 }
 
 interface ToolsRunningTime {
     [key: string]: ToolsRunningTimeInfo
+}
+
+interface AllOper {
+    id: string;
+    name: string;
+    name_en: string;
+    name_jp: string;
+    name_kr: string;
+    name_tw: string;
+    own: boolean;
+    rarity: number;
+}
+
+interface OwnOper {
+    elite: number;
+    id: string;
+    level: number;
+    name: string;
+    own: boolean;
+    potential: number;
+    rarity: number;
+}
+
+interface Detail {
+    all_opers: AllOper[];
+    done: boolean;
+    own_opers: OwnOper[];
+}
+
+interface OperBoxJson {
+    class: string;
+    details: Detail;
+    subtask: string;
+    taskchain: string;
+    taskid: number;
+    uuid: string;
+    what: string;
 }
 
 export const ToolsRunningTimeStore = defineStore('ToolsRunningTime', () => {
@@ -63,7 +101,16 @@ export const ToolsRunningTimeStore = defineStore('ToolsRunningTime', () => {
                 },
                 depot_arkntools: {},
                 oper_box_listen: null,
-                oper_box_information: ["有问题需要解决，暂时不开放使用"],
+                oper_box_information: "",
+                oper_box_json: {
+                    class: "",
+                    details: { all_opers: [], done: false, own_opers: [] },
+                    subtask: "",
+                    taskchain: "",
+                    taskid: 1,
+                    uuid: "",
+                    what: "",
+                },
                 video_recognition_listen: null,
                 video_recognition_information: [],
             }
@@ -131,4 +178,4 @@ export const ToolsConfigStore = defineStore('ToolsConfig', () => {
     return { config, GetToolsConfig }
 })
 
-export type { ToolsRunningTimeInfo, DepotArkntools, DepotPenguin }
+export type { ToolsRunningTimeInfo, DepotArkntools, DepotPenguin, OperBoxJson }

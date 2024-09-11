@@ -1,22 +1,25 @@
 <template>
   <div style="height: 405px">
     <div style="height: 321px">
-      <el-scrollbar max-height="321px" ref="scrollbarRef" style="background-color: #f3f3f3">
-        <div
-          v-for="info in infomations"
-          :key="info.item_id"
-          style="height: 46px; width: 240px; float: left"
-        >
-          <el-row>
-            <el-col :span="4" style="text-align: left; line-height: 34px">
-              <el-image style="width: 30px; height: 30px" :src="info.img_src" fit="fill" />
-            </el-col>
-            <el-col :span="10" style="text-align: left; line-height: 34px"> {{ info.name }}</el-col>
-            <el-col :span="8" style="text-align: left; line-height: 34px">
-              {{ info.count }}
-            </el-col>
-          </el-row>
-        </div>
+      <el-scrollbar
+        max-height="321px"
+        ref="scrollbarRef"
+        style="background-color: #f3f3f3; padding: 10px"
+        class="flex gap-2"
+      >
+        <el-space wrap>
+          <el-tag
+            size="large"
+            type="primary"
+            effect="plain"
+            v-for="info in infomations"
+            :key="info.item_id"
+            style="height: 50px"
+          >
+            <el-image style="width: 30px; height: 30px" :src="info.img_src" fit="fill" />
+            <div class="info-text">&nbsp;&nbsp;&nbsp;{{ info.name }}({{ info.count }})</div>
+          </el-tag>
+        </el-space>
       </el-scrollbar>
     </div>
     <div class="tools-bottom">
@@ -24,7 +27,7 @@
         <div class="tools-bottom-button">
           <el-button
             class="copy-tools tools-button"
-            @click="writeText(JSON.stringify(tools_rt.depot_penguin))"
+            @click="writeText(JSON.stringify(tools_rt.depot_penguin, null, 2))"
             :disabled="config.status === 1 || tools_rt.depot_penguin.items.length === 0"
           >
             导出至企鹅物流刷图规划
@@ -33,7 +36,7 @@
         <div class="tools-bottom-button">
           <el-button
             class="copy-tools tools-button"
-            @click="writeText(JSON.stringify(tools_rt.depot_arkntools))"
+            @click="writeText(JSON.stringify(tools_rt.depot_arkntools, null, 2))"
             :disabled="config.status === 1 || Object.keys(tools_rt.depot_arkntools!).length === 0"
           >
             导出至明日方舟工具箱
@@ -181,6 +184,7 @@ onMounted(async () => {
       await join(pathInfoStore.path.maa_data_dir, 'MaaResource', 'resource', 'item_index.json')
     )
   )
+  changeText()
 })
 </script>
 <style lang="scss" scoped>
@@ -197,5 +201,12 @@ onMounted(async () => {
 .tools-button {
   width: 180px;
   height: 70px;
+}
+.info-text {
+  height: 30px;
+  display: inline-block;
+  overflow: hidden;
+  position: relative;
+  line-height: 30px;
 }
 </style>

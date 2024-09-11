@@ -1,21 +1,45 @@
 <template>
   <div style="height: 405px">
     <div style="height: 321px">
-      <el-scrollbar max-height="321px" ref="scrollbarRef">
-        <p v-for="item in tools_rt.oper_box_information" :key="item">
-          {{ item }}
-        </p>
+      <el-scrollbar
+        max-height="321px"
+        ref="scrollbarRef"
+        style="background-color: #f3f3f3; padding: 10px"
+        class="flex gap-2"
+      >
+        <el-space wrap>
+          <el-tag
+            size="large"
+            type="primary"
+            effect="plain"
+            v-for="item in tools_rt.oper_box_json.details.own_opers"
+            :key="item.id"
+          >
+            &nbsp;&nbsp;&nbsp;{{ item.name }}({{ item.level }})&nbsp;&nbsp;&nbsp;
+          </el-tag>
+          <el-tag size="large" type="success" style="width: 705px"
+            >一共有 {{ tools_rt.oper_box_json.details.own_opers.length }} 个干员</el-tag
+          >
+        </el-space>
       </el-scrollbar>
     </div>
     <div class="tools-bottom">
       <el-space wrap :size="60">
         <div class="tools-bottom-button">
-          <el-button class="copy-tools tools-button" @click="start" :disabled="true">
+          <el-button
+            class="copy-tools tools-button"
+            @click="writeText(JSON.stringify(tools_rt.oper_box_json.details.own_opers, null, 2))"
+            :disabled="config.status === 1 || tools_rt.oper_box_json.details.own_opers.length === 0"
+          >
             复制到剪切板
           </el-button>
         </div>
         <div class="tools-bottom-button">
-          <el-button class="start-tools tools-button" @click="start" :disabled="true">
+          <el-button
+            class="start-tools tools-button"
+            @click="start"
+            :disabled="config.status === 1"
+          >
             开始识别
           </el-button>
         </div>
@@ -28,6 +52,7 @@
 import {
   ToolsConfigStore,
   ToolsRunningTimeStore,
+  type OperBoxJson,
   type ToolsRunningTimeInfo
 } from '@/stores/ToolsConfig'
 import { onMounted, ref } from 'vue'
@@ -35,6 +60,7 @@ import { listen } from '@tauri-apps/api/event'
 import { UserConfigStore, type UserConfig } from '@/stores/UserConfig'
 import { ToolsExecute } from '@/apis/Tools'
 import { ElScrollbar } from 'element-plus'
+import { writeText } from '@tauri-apps/api/clipboard'
 
 const scrollbarRef = ref<InstanceType<typeof ElScrollbar>>()
 const changeText = () => {
@@ -72,9 +98,17 @@ const start = async () => {
     selectConfig.value + '_tools_oper_box_handle',
     (event: any) => {
       const payload = event.payload as Payload
-      console.log(payload.msg)
-      tools_rt.value.oper_box_information.push(payload.msg)
-      changeText()
+      if (payload.msg === 'OperBox: {') {
+        tools_rt.value.oper_box_information = '{'
+      } else if (payload.msg === '}') {
+        tools_rt.value.oper_box_information += payload.msg
+        tools_rt.value.oper_box_json = JSON.parse(tools_rt.value.oper_box_information)
+        tools_rt.value.oper_box_information = ''
+        changeText()
+      } else {
+        tools_rt.value.oper_box_information += payload.msg
+      }
+
       if (payload.code !== 0) {
         config.value.status = 0
       }
@@ -83,7 +117,9 @@ const start = async () => {
   await ToolsExecute(selectConfig.value, 'oper_box', { tasks: [tools_config.value.oper_box] })
 }
 
-onMounted(() => {})
+onMounted(() => {
+  changeText()
+})
 </script>
 <style lang="scss" scoped>
 .tools-bottom {
