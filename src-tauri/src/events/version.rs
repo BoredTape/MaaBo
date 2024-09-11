@@ -43,8 +43,9 @@ pub struct CheckUpdateData {
 }
 
 #[tauri::command(async)]
-pub fn check_update() -> payload::Payload<CheckUpdateData> {
-    let online_version = semver::Version::parse(&utils::fetch_online_version())
+pub async fn check_update() -> payload::Payload<CheckUpdateData> {
+    let version_str = utils::fetch_online_version().await;
+    let online_version = semver::Version::parse(&version_str)
         .unwrap_or_else(|_| semver::Version::parse(&"0.0.0").unwrap());
     let current_version = semver::Version::parse(env!("CARGO_PKG_VERSION"))
         .unwrap_or_else(|_| semver::Version::parse(&"0.0.0").unwrap());
