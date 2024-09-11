@@ -8,6 +8,15 @@ pub fn one_key_process(config_name: &str) -> Result<os_pipe::PipeReader, std::io
     Ok(reader)
 }
 
+pub fn tools_process(
+    config_name: &str,
+    tools_name: &str,
+) -> Result<os_pipe::PipeReader, std::io::Error> {
+    let (reader, child) = utils::maa_tools(config_name, tools_name)?;
+    status::set_maa_running(String::from(config_name), Some(child));
+    Ok(reader)
+}
+
 pub fn copilot_process(
     config_name: &str,
     uri: &str,

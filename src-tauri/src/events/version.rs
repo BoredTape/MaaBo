@@ -42,7 +42,7 @@ pub struct CheckUpdateData {
     to: String,
 }
 
-#[tauri::command]
+#[tauri::command(async)]
 pub fn check_update() -> payload::Payload<CheckUpdateData> {
     let online_version = semver::Version::parse(&utils::fetch_online_version())
         .unwrap_or_else(|_| semver::Version::parse(&"0.0.0").unwrap());
