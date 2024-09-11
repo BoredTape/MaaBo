@@ -57,7 +57,7 @@
     </div>
     <div class="right-box">
       <el-scrollbar class="right-msg" ref="scrollbarRef" max-height="369px" style="padding: 5px">
-        <p v-for="item in information" :key="item">
+        <p v-for="item in rt.copilot_information" :key="item">
           {{ item }}
         </p>
       </el-scrollbar>
@@ -122,21 +122,16 @@ const config = ref<UserConfig>(
 )
 
 const rt = ref(runningTime.GetRt(config.value.name))
-const information = ref(rt.value.copilot_information)
 const start = async () => {
   if (config.value.status === 0) {
     if (runningTime.GetCopilotListen(config.value.name)) {
       runningTime.GetCopilotListen(config.value.name)!()
     }
     rt.value.copilot_information = ['* * *']
-    information.value = ['* * *']
     const unlisten = await listen(config.value.name + '_copilot_handle', (event: any) => {
       const payload = event.payload as Payload
-      information.value = information.value.slice(0, -1)
       rt.value.copilot_information = rt.value.copilot_information.slice(0, -1)
-      information.value.push(payload.msg)
       rt.value.copilot_information.push(payload.msg)
-      information.value.push('* * *')
       rt.value.copilot_information.push('* * *')
       changeText()
     })
@@ -152,7 +147,7 @@ const start = async () => {
 }
 
 onMounted(() => {
-  information.value = rt.value.copilot_information
+  changeText()
 })
 </script>
 

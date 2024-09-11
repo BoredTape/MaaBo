@@ -37,6 +37,17 @@
       },
       "shell": {
         "open":true
+      },
+      "fs":{
+        "all":true,
+        "scope": ["**"]
+      },
+      "path": {
+        "all": true
+      },
+      "protocol": {
+        "asset": true,
+        "assetScope": ["**"]
       }
     },
     "bundle": {

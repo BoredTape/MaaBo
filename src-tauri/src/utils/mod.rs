@@ -21,13 +21,13 @@ pub fn make_dir_exist(path: &PathBuf) -> Result<(), Error> {
     Ok(())
 }
 
-pub fn fetch_online_version() -> String {
-    let client = reqwest::blocking::Client::new();
+pub async fn fetch_online_version() -> String {
+    let client = reqwest::Client::new();
     let request = client
         .request(reqwest::Method::GET, consts::MAABO_ONLINE_VERSION_URL)
         .header("User-Agent", consts::REQUEST_QA);
-    match request.send() {
-        Ok(resp) => match resp.json::<serde_json::Value>() {
+    match request.send().await {
+        Ok(resp) => match resp.json::<serde_json::Value>().await {
             Ok(json_value) => json_value["tag_name"]
                 .as_str()
                 .unwrap_or("0.0.0")

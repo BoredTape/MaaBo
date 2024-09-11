@@ -69,7 +69,7 @@
     </div>
     <div class="right-box">
       <el-scrollbar class="right-msg" ref="scrollbarRef" max-height="372px" style="padding: 5px">
-        <p v-for="item in information" :key="item">
+        <p v-for="item in rt.one_key_information" :key="item">
           {{ item }}
         </p>
       </el-scrollbar>
@@ -162,7 +162,6 @@ interface Payload {
 }
 
 const rt = ref(runningTime.GetRt(config.value.name))
-const information = ref(rt.value.one_key_information)
 
 const start = async () => {
   if (config.value.status === 0) {
@@ -170,14 +169,10 @@ const start = async () => {
       runningTime.GetOneKeyListen(config.value.name)!()
     }
     rt.value.one_key_information = ['* * *']
-    information.value = ['* * *']
     const unlisten = await listen(config.value.name + '_one_key_handle', (event: any) => {
       const payload = event.payload as Payload
-      information.value = information.value.slice(0, -1)
       rt.value.one_key_information = rt.value.one_key_information.slice(0, -1)
-      information.value.push(payload.msg)
       rt.value.one_key_information.push(payload.msg)
-      information.value.push('* * *')
       rt.value.one_key_information.push('* * *')
       changeText()
     })
@@ -367,8 +362,8 @@ const deleteConfig = (name: string) => {
 }
 
 onMounted(() => {
-  information.value = rt.value.one_key_information
   setSelection()
+  changeText()
 })
 </script>
 

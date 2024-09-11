@@ -18,7 +18,7 @@
       <el-form-item label="所有邮件奖励">
         <el-switch v-model="params.mail" :disabled="userConfig!.status == 1 && params.enable" />
       </el-form-item>
-      <el-form-item label="限定池子赠送的每日免费单抽">
+      <el-form-item label="限定赠送的每日免费单抽">
         <el-switch v-model="params.recruit" :disabled="userConfig!.status == 1 && params.enable" />
       </el-form-item>
       <el-form-item label="幸运墙的合成玉奖励">

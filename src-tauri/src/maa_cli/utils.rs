@@ -112,6 +112,7 @@ fn cli_command_with_stdin(
         .env("MAA_STATE_DIR", state_path.to_str().unwrap())
         .env("MAA_CACHE_DIR", cache_dir().to_str().unwrap())
         .env("MAA_LOG", "info")
+        .env("MAA_LOG_PREFIX", "Never")
         .args(args);
     command.stdout(writer_stdout);
     command.stderr(writer_stdout_clone);
@@ -305,6 +306,21 @@ pub fn maa_one_key(config_name: &str) -> Result<(os_pipe::PipeReader, Child), Er
         vec![
             "run",
             config_name,
+            &format!("--profile={}.toml", config_name),
+            // &format!("--log-file={}",log_dir().join(consts::MAA_CLI_LOG_FILE_NAME).to_str().unwrap())
+        ],
+    )
+}
+
+pub fn maa_tools(
+    config_name: &str,
+    tools_name: &str,
+) -> Result<(os_pipe::PipeReader, Child), Error> {
+    cli_command(
+        config_name,
+        vec![
+            "run",
+            tools_name,
             &format!("--profile={}.toml", config_name),
             // &format!("--log-file={}",log_dir().join(consts::MAA_CLI_LOG_FILE_NAME).to_str().unwrap())
         ],
