@@ -11,11 +11,9 @@ import { useRouter } from 'vue-router'
 import { listen } from '@tauri-apps/api/event'
 import { invoke } from '@tauri-apps/api/tauri'
 import moment from 'moment'
-import { UserConfigStore } from '@/stores/UserConfig'
 import { MaaCliConfigStore } from '@/stores/MaaCLIConfig'
 import { PathInfoStore } from '@/stores/PathInfo'
 
-const userConfig = UserConfigStore()
 const cliConfig = MaaCliConfigStore()
 const pathInfo = PathInfoStore()
 
@@ -47,7 +45,7 @@ const listen_init_msg = async () => {
     if (payload.code === 1) {
       cliConfig.Load()
 
-      userConfig.Load()
+      // userConfig.Load()
 
       pathInfo.Load()
       unlisten()

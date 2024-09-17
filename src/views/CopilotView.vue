@@ -1,7 +1,12 @@
 <template>
-  <el-tabs v-model="tabsValue" type="border-card" tabPosition="bottom">
+  <el-tabs
+    class="copilot-tabs"
+    v-model="maaboRTStore.selectTab"
+    type="border-card"
+    tabPosition="bottom"
+  >
     <el-tab-pane
-      v-for="config in userConfigStore.configs"
+      v-for="config in maaboConfigStore.user_configs"
       :key="config.name"
       :name="config.name"
       class="config-tabs"
@@ -35,11 +40,17 @@
 </template>
 <script setup lang="ts">
 import { open } from '@tauri-apps/api/shell'
-import { UserConfigStore } from '@/stores/UserConfig'
-
-const userConfigStore = UserConfigStore()
-const tabsValue = userConfigStore.GetSelectedConfig()
+import { MaaBoConfigStore } from '@/stores/MaaBoConfig'
+import { MaaBoRTStore } from '@/stores/MaaBoRT'
+const maaboRTStore = MaaBoRTStore()
+const maaboConfigStore = MaaBoConfigStore()
 </script>
+
+<style lang="scss">
+.copilot-tabs > div.el-tabs__content {
+  padding-bottom: 0px;
+}
+</style>
 
 <style lang="scss" scoped>
 .links-box {

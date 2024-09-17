@@ -1,7 +1,7 @@
 <template>
-  <el-tabs v-model="tabsValue" type="border-card" tabPosition="bottom">
+  <el-tabs v-model="maaboRTStore.selectTab" type="border-card" tabPosition="bottom">
     <el-tab-pane
-      v-for="config in userConfigStore.configs"
+      v-for="config in maaboConfigStore.user_configs"
       :key="config.name"
       :name="config.name"
       class="config-tabs"
@@ -21,10 +21,11 @@
   </el-tabs>
 </template>
 <script setup lang="ts">
-import { UserConfigStore } from '@/stores/UserConfig'
+import { MaaBoConfigStore } from '@/stores/MaaBoConfig'
+import { MaaBoRTStore } from '@/stores/MaaBoRT'
 
-const userConfigStore = UserConfigStore()
-const tabsValue = userConfigStore.GetSelectedConfig()
+const maaboConfigStore = MaaBoConfigStore()
+const maaboRTStore = MaaBoRTStore()
 </script>
 
 <style lang="scss" scoped></style>

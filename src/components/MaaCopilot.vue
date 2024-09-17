@@ -44,7 +44,7 @@
         <el-row style="text-align: center">
           <el-col style="text-align: center">
             <el-button
-              style="margin-top: 30px"
+              style="margin-top: 30px; margin-bottom: 30px"
               size="large"
               round
               class="start-button"
@@ -66,18 +66,21 @@
 </template>
 
 <script setup lang="ts">
-import { type UserConfig, UserConfigStore } from '@/stores/UserConfig'
 import { onMounted, ref } from 'vue'
 import { FolderOpened, DocumentCopy } from '@element-plus/icons-vue'
 import { readText } from '@tauri-apps/api/clipboard'
 import { open } from '@tauri-apps/api/dialog'
 import { listen } from '@tauri-apps/api/event'
 import { StartCopilot, Stop } from '@/apis/Run'
-import { RTStore } from '@/stores/rt'
 import { ElScrollbar } from 'element-plus'
+import { MaaBoConfigStore } from '@/stores/MaaBoConfig'
+import { MaaBoRTStore } from '@/stores/MaaBoRT'
 
-const userConfigStore = UserConfigStore()
-const runningTime = RTStore()
+const maaBoConfigStore = MaaBoConfigStore()
+const maaBoRTStore = MaaBoRTStore()
+
+const config = maaBoConfigStore.user_configs[maaBoRTStore.selectTab]
+const rt = maaBoRTStore.GetCurrentMaaBoRT()
 
 const SelectFile = async () => {
   const selected = await open({
@@ -117,32 +120,27 @@ interface Payload {
   ts: number
 }
 
-const config = ref<UserConfig>(
-  userConfigStore.GetConfig(userConfigStore.GetSelectedConfig().value) as UserConfig
-)
-
-const rt = ref(runningTime.GetRt(config.value.name))
 const start = async () => {
-  if (config.value.status === 0) {
-    if (runningTime.GetCopilotListen(config.value.name)) {
-      runningTime.GetCopilotListen(config.value.name)!()
+  if (maaBoConfigStore.user_configs[maaBoRTStore.selectTab].status === 0) {
+    if (rt.copilot_listen) {
+      rt.copilot_listen!()
     }
-    rt.value.copilot_information = ['* * *']
-    const unlisten = await listen(config.value.name + '_copilot_handle', (event: any) => {
+    rt.copilot_information = ['* * *']
+    const unlisten = await listen(config.name + '_copilot_handle', (event: any) => {
       const payload = event.payload as Payload
-      rt.value.copilot_information = rt.value.copilot_information.slice(0, -1)
-      rt.value.copilot_information.push(payload.msg)
-      rt.value.copilot_information.push('* * *')
+      rt.copilot_information = rt.copilot_information.slice(0, -1)
+      rt.copilot_information.push(payload.msg)
+      rt.copilot_information.push('* * *')
       changeText()
     })
-    runningTime.SetCopilotListen(config.value.name, unlisten)
-    await StartCopilot(config.value.name, uri.value, autoFormation.value)
-  } else if (config.value.status === 1) {
-    await Stop(config.value.name)
+    rt.copilot_listen = unlisten
+    await StartCopilot(config.name, uri.value, autoFormation.value)
+  } else if (config.status === 1) {
+    await Stop(config.name)
     // if (runningTime.GetCopilotListen(config.value.name)) {
     //   runningTime.GetCopilotListen(config.value.name)!()
     // }
-    runningTime.GetCopilotListen(config.value.name)!()
+    rt.copilot_listen!()
   }
 }
 
@@ -164,7 +162,7 @@ onMounted(() => {
   padding-left: 10px;
   padding-right: 10px;
   width: 272px;
-  min-height: 381px;
+  // min-height: 381px;
 }
 
 .right-box {
@@ -177,7 +175,7 @@ onMounted(() => {
 }
 
 .table-box {
-  min-height: 352px;
+  // min-height: 352px;
   width: 252px;
 }
 .right-msg {

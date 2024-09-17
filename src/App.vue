@@ -65,13 +65,14 @@ import { ElNotification, type NotificationParams } from 'element-plus'
 import { listen } from '@tauri-apps/api/event'
 import moment from 'moment'
 import { ref, onMounted } from 'vue'
-import { UserConfigStore } from './stores/UserConfig'
 import { UpdateMaaCli, IgnoreMaaCliUpdate } from './apis/Update'
 import { open } from '@tauri-apps/api/shell'
 import { CheckMaaBoUpdate } from './apis/Version'
+import { MaaBoConfigStore } from './stores/MaaBoConfig'
+
+const maaboConfigStore = MaaBoConfigStore()
 
 document.addEventListener('contextmenu', (event) => event.preventDefault())
-const userConfigStore = UserConfigStore()
 
 const updateMaaboVisible = ref(false)
 const updateMaaboMsg = ref('')
@@ -161,7 +162,7 @@ const listen_update_msg = async () => {
 const listen_update_config_status = async () => {
   const unlisten = await listen('update_config_status', (event: any) => {
     const payload = event.payload as Payload
-    userConfigStore.SetConfigStatus(payload.data!.name, payload.data!.status)
+    maaboConfigStore.user_configs[payload.data!.name].status = payload.data!.status
   })
 }
 
