@@ -14,4 +14,22 @@ interface AwardTask {
   params: AwardTaskParams
 }
 
+const AwardDefault = (): AwardTask => {
+  return {
+    name: "领取奖励",
+    type: "Award",
+    params: {
+      award: true,
+      enable: true,
+      mail: false,
+      mining: false,
+      orundum: false,
+      recruit: false,
+      specialaccess: false
+    }
+  }
+}
+
+export { AwardDefault }
+
 export type { AwardTask, AwardTaskParams }

@@ -28,4 +28,32 @@ interface InfrastTask {
   params: InfrastTaskParams
 }
 
+const InfrastDefault = (): InfrastTask => {
+  return {
+    name: "基建换班",
+    type: "Infrast",
+    params: {
+      dorm_notstationed_enabled: true,
+      dorm_trust_enabled: true,
+      drones: "Money",
+      enable: true,
+      facility: [
+        "Trade",
+        "Reception",
+        "Mfg",
+        "Control",
+        "Power",
+        "Office",
+        "Dorm"
+      ],
+      filename: "",
+      mode: 0,
+      plan_index: 0,
+      replenish: false,
+      threshold: 0.3
+    }
+  }
+}
+
+export { InfrastDefault }
 export type { InfrastTask, InfrastTaskParams }

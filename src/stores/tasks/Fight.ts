@@ -32,4 +32,24 @@ interface FightTask {
   params: FightTaskParams
 }
 
+
+const FightDefault = (): FightTask => {
+  return {
+    name: "刷理智",
+    type: "Fight",
+    params: {
+      client_type: "Official",
+      enable: true,
+      expiring_medicine: 0,
+      medicine: 0,
+      series: 1,
+      stage: "",
+      stone: 0,
+      times: 1
+    }
+  }
+}
+
+export { FightDefault }
+
 export type { FightTask, FightTaskParams }

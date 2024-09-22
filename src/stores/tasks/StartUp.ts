@@ -15,4 +15,18 @@ interface StartUpTask {
   params: StartUpTaskParams
 }
 
+const StartUpDefault = (): StartUpTask => {
+  return {
+    name: "开始唤醒",
+    type: "StartUp",
+    params: {
+      account_name: "",
+      client_type: "Official",
+      enable: true,
+      start_game_enabled: true
+    }
+  }
+}
+
+export { StartUpDefault }
 export type { StartUpTask, StartUpTaskParams }

@@ -46,4 +46,38 @@ interface RoguelikeTask {
   params: RoguelikeTaskParams
 }
 
+const RoguelikeDefault = (): RoguelikeTask => {
+  return {
+    name: "无限肉鸽",
+    type: "Roguelike",
+    params: {
+      check_collapsal_paradigms: false,
+      core_char: "",
+      double_check_collapsal_paradigms: false,
+      enable: true,
+      expected_collapsal_paradigms: [
+        "目空一些",
+        "睁眼瞎",
+        "图像损坏",
+        "一抹黑"
+      ],
+      investment_enabled: true,
+      investments_count: 2147483647,
+      mode: 0,
+      only_start_with_elite_two: false,
+      refresh_trader_with_dice: false,
+      roles: "取长补短",
+      squad: "指挥分队",
+      start_with_elite_two: false,
+      starts_count: 2147483647,
+      stop_when_investment_full: false,
+      theme: "Phantom",
+      use_foldartal: false,
+      use_nonfriend_support: false,
+      use_support: false
+    }
+  }
+}
+
+export { RoguelikeDefault }
 export type { RoguelikeTask, RoguelikeTaskParams }

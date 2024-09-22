@@ -21,4 +21,20 @@ interface ReclamationTask {
   params: ReclamationTaskParams
 }
 
+const ReclamationDefault = (): ReclamationTask => {
+  return {
+    name: "生息演算",
+    type: "Reclamation",
+    params: {
+      enable: true,
+      increment_mode: 0,
+      mode: 0,
+      num_craft_batches: 16,
+      theme: "Tales",
+      tool_to_craft: "荧光棒"
+    }
+  }
+}
+
+export { ReclamationDefault }
 export type { ReclamationTask, ReclamationTaskParams }

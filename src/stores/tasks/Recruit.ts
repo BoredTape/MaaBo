@@ -29,4 +29,35 @@ interface RecruitTask {
   params: RecruitTaskParams
 }
 
+const RecruitDefault = (): RecruitTask => {
+  return {
+    name: "自动公招",
+    type: "Recruit",
+    params: {
+      confirm: [
+        3,
+        4,
+        5
+      ],
+      enable: true,
+      expedite: false,
+      first_tags: [],
+      refresh: true,
+      select: [
+        4,
+        5
+      ],
+      skip_robot: false,
+      times: 0,
+      recruitment_time: {
+        "3": 540,
+        "4": 540,
+        "5": 540,
+        "6": 540
+      }
+    }
+  }
+}
+
+export { RecruitDefault }
 export type { RecruitTask, RecruitTaskParams }

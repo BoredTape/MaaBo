@@ -12,13 +12,13 @@
             size="large"
             type="primary"
             effect="plain"
-            v-for="item in tools_rt.oper_box_json.details.own_opers"
+            v-for="item in rt.oper_box_json.details.own_opers"
             :key="item.id"
           >
             &nbsp;&nbsp;&nbsp;{{ item.name }}({{ item.level }})&nbsp;&nbsp;&nbsp;
           </el-tag>
           <el-tag size="large" type="success" style="width: 705px"
-            >一共有 {{ tools_rt.oper_box_json.details.own_opers.length }} 个干员</el-tag
+            >一共有 {{ rt.oper_box_json.details.own_opers.length }} 个干员</el-tag
           >
         </el-space>
       </el-scrollbar>
@@ -28,8 +28,8 @@
         <div class="tools-bottom-button">
           <el-button
             class="copy-tools tools-button"
-            @click="writeText(JSON.stringify(tools_rt.oper_box_json.details.own_opers, null, 2))"
-            :disabled="config.status === 1 || tools_rt.oper_box_json.details.own_opers.length === 0"
+            @click="writeText(JSON.stringify(rt.oper_box_json.details.own_opers, null, 2))"
+            :disabled="config.status === 1 || rt.oper_box_json.details.own_opers.length === 0"
           >
             复制到剪切板
           </el-button>
@@ -49,18 +49,17 @@
 </template>
 
 <script setup lang="ts">
-import {
-  ToolsConfigStore,
-  ToolsRunningTimeStore,
-  type OperBoxJson,
-  type ToolsRunningTimeInfo
-} from '@/stores/ToolsConfig'
+import { MaaBoConfigStore } from '@/stores/MaaBoConfig'
+import { MaaBoRTStore } from '@/stores/MaaBoRT'
 import { onMounted, ref } from 'vue'
 import { listen } from '@tauri-apps/api/event'
-import { UserConfigStore, type UserConfig } from '@/stores/UserConfig'
 import { ToolsExecute } from '@/apis/Tools'
 import { ElScrollbar } from 'element-plus'
 import { writeText } from '@tauri-apps/api/clipboard'
+const maaBoRTStore = MaaBoRTStore()
+const maaBoConfigStore = MaaBoConfigStore()
+const rt = maaBoRTStore.GetCurrentMaaBoRT()
+const config = maaBoConfigStore.user_configs[maaBoRTStore.selectTab]
 
 const scrollbarRef = ref<InstanceType<typeof ElScrollbar>>()
 const changeText = () => {
@@ -69,19 +68,6 @@ const changeText = () => {
   container.scrollTop = container.scrollHeight
 }
 
-const toolsConfigStore = ToolsConfigStore()
-const toolsRunningTimeStore = ToolsRunningTimeStore()
-const userConfigStore = UserConfigStore()
-
-const selectConfig = userConfigStore.GetSelectedConfig()
-const tools_config = ref(toolsConfigStore.GetToolsConfig(userConfigStore.GetSelectedConfig().value))
-const tools_rt = ref<ToolsRunningTimeInfo>(
-  toolsRunningTimeStore.GetRunningTime(selectConfig.value) as ToolsRunningTimeInfo
-)
-const config = ref<UserConfig>(
-  userConfigStore.GetConfig(userConfigStore.GetSelectedConfig().value) as UserConfig
-)
-
 interface Payload {
   code: number
   msg: string
@@ -89,32 +75,29 @@ interface Payload {
 }
 
 const start = async () => {
-  tools_config.value.oper_box.params.enable = true
-  if (tools_rt.value.oper_box_listen) {
-    tools_rt.value.oper_box_listen()
+  config.tools!.oper_box.params.enable = true
+  if (rt.oper_box_listen) {
+    rt.oper_box_listen()
   }
-  config.value.status = 1
-  tools_rt.value.oper_box_listen = await listen(
-    selectConfig.value + '_tools_oper_box_handle',
-    (event: any) => {
-      const payload = event.payload as Payload
-      if (payload.msg === 'OperBox: {') {
-        tools_rt.value.oper_box_information = '{'
-      } else if (payload.msg === '}') {
-        tools_rt.value.oper_box_information += payload.msg
-        tools_rt.value.oper_box_json = JSON.parse(tools_rt.value.oper_box_information)
-        tools_rt.value.oper_box_information = ''
-        changeText()
-      } else {
-        tools_rt.value.oper_box_information += payload.msg
-      }
-
-      if (payload.code !== 0) {
-        config.value.status = 0
-      }
+  config.status = 1
+  rt.oper_box_listen = await listen(config.name + '_tools_oper_box_handle', (event: any) => {
+    const payload = event.payload as Payload
+    if (payload.msg === 'OperBox: {') {
+      rt.oper_box_information = '{'
+    } else if (payload.msg === '}') {
+      rt.oper_box_information += payload.msg
+      rt.oper_box_json = JSON.parse(rt.oper_box_information)
+      rt.oper_box_information = ''
+      changeText()
+    } else {
+      rt.oper_box_information += payload.msg
     }
-  )
-  await ToolsExecute(selectConfig.value, 'oper_box', { tasks: [tools_config.value.oper_box] })
+
+    if (payload.code !== 0) {
+      config.status = 0
+    }
+  })
+  await ToolsExecute(config.name, 'oper_box', { tasks: [config.tools!.oper_box] })
 }
 
 onMounted(() => {

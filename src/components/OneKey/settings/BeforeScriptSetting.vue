@@ -1,24 +1,33 @@
 <template>
   <el-dialog
-    v-model="dialogVisible['StartUp']"
-    title="开始唤醒设置"
+    v-model="rt.setting_dialog['BeforeScript']"
+    title="种草前设置"
     center
     destroy-on-close
-    style="width: 330px"
+    style="width: 450px"
     :before-close="saveSetting"
   >
+    <el-input
+      :autosize="{ minRows: 20, maxRows: 20 }"
+      resize="none"
+      v-model="config.before_scripts"
+      type="textarea"
+    />
     <template #footer> </template>
   </el-dialog>
 </template>
 
 <script setup lang="ts">
-import { UserConfigStore } from '@/stores/UserConfig'
-import { ref } from 'vue'
-const userConfigStore = UserConfigStore()
+import { MaaBoConfigStore } from '@/stores/MaaBoConfig'
+import { MaaBoRTStore } from '@/stores/MaaBoRT'
 
-const dialogVisible = ref(userConfigStore.GetSettingDialogObj())
+const maaBoRTStore = MaaBoRTStore()
+const maaBoConfigStore = MaaBoConfigStore()
+const rt = maaBoRTStore.GetCurrentMaaBoRT()
+const config = maaBoConfigStore.user_configs[maaBoRTStore.selectTab]
+
 const saveSetting = () => {
-  dialogVisible.value['StartUp'] = false
+  rt.setting_dialog['BeforeScript'] = false
 }
 </script>
 

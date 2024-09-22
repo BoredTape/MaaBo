@@ -14,4 +14,27 @@ interface MallTask {
   params: MallTaskParams
 }
 
+const MallDefault = (): MallTask => {
+  return {
+    name: "领取信用及商店购物",
+    type: "Mall",
+    params: {
+      blacklist: [
+        "碳",
+        "家具",
+        "加急许可"
+      ],
+      buy_first: [
+        "招聘许可"
+      ],
+      enable: true,
+      force_shopping_if_credit_full: true,
+      only_buy_discount: false,
+      reserve_max_credit: false,
+      shopping: true
+    }
+  }
+}
+
+export { MallDefault }
 export type { MallTask, MallTaskParams }

@@ -6,6 +6,16 @@
     <div class="right-box">
       <TaskInfo />
     </div>
+    <StartUpSetting />
+    <FightSetting />
+    <InfrastSetting />
+    <MallSetting />
+    <AwardSetting />
+    <RecruitSetting />
+    <ReclamationSetting />
+    <RoguelikeSetting />
+    <BeforeScriptSetting />
+    <AfterScriptSetting />
   </div>
 </template>
 

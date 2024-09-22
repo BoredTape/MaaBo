@@ -60,6 +60,7 @@ interface SettingDialog {
 
 interface RunningTimeInfo {
     setting_dialog: SettingDialog,
+    setting_index: number,
     one_key_listen: UnlistenFn | null
     one_key_information: string[]
     copilot_listen: UnlistenFn | null
@@ -85,6 +86,7 @@ export const MaaBoRTStore = defineStore('MaaBoRT', () => {
     const GetMaaBoRT = (name: string) => {
         if (!rt.value[name]) {
             rt.value[name] = {
+                setting_index: 0,
                 setting_dialog: {
                     "MaaCore": false,
                     "AfterScript": false,
@@ -145,3 +147,5 @@ export const MaaBoRTStore = defineStore('MaaBoRT', () => {
 
     return { rt, GetMaaBoRT, GetCurrentMaaBoRT, selectTab }
 })
+
+export type { DepotPenguin, DepotArkntools }

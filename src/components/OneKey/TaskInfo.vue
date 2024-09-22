@@ -61,11 +61,9 @@ onMounted(() => {
   border: 1px solid var(--el-border-color);
 }
 div.button-box {
-  margin-top: 6px;
-  margin-bottom: 6px;
   text-align: center;
   height: 45px;
-  line-height: 45px;
+  line-height: 40px;
 }
 
 .button-list {

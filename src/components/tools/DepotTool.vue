@@ -27,8 +27,8 @@
         <div class="tools-bottom-button">
           <el-button
             class="copy-tools tools-button"
-            @click="writeText(JSON.stringify(tools_rt.depot_penguin, null, 2))"
-            :disabled="config.status === 1 || tools_rt.depot_penguin.items.length === 0"
+            @click="writeText(JSON.stringify(rt.depot_penguin, null, 2))"
+            :disabled="config.status === 1 || rt.depot_penguin.items.length === 0"
           >
             导出至企鹅物流刷图规划
           </el-button>
@@ -36,8 +36,8 @@
         <div class="tools-bottom-button">
           <el-button
             class="copy-tools tools-button"
-            @click="writeText(JSON.stringify(tools_rt.depot_arkntools, null, 2))"
-            :disabled="config.status === 1 || Object.keys(tools_rt.depot_arkntools!).length === 0"
+            @click="writeText(JSON.stringify(rt.depot_arkntools, null, 2))"
+            :disabled="config.status === 1 || Object.keys(rt.depot_arkntools!).length === 0"
           >
             导出至明日方舟工具箱
           </el-button>
@@ -57,23 +57,23 @@
 </template>
 
 <script setup lang="ts">
-import {
-  ToolsConfigStore,
-  ToolsRunningTimeStore,
-  type DepotArkntools,
-  type DepotPenguin,
-  type ToolsRunningTimeInfo
-} from '@/stores/ToolsConfig'
+import type { ItemIndex } from '@/apis/ItemIndex'
+import { GetItemIndex } from '@/apis/ItemIndex'
 import { onMounted, ref } from 'vue'
 import { listen } from '@tauri-apps/api/event'
-import { UserConfigStore, type UserConfig } from '@/stores/UserConfig'
 import { ToolsExecute } from '@/apis/Tools'
 import { ElScrollbar } from 'element-plus'
 import { writeText } from '@tauri-apps/api/clipboard'
 import { PathInfoStore } from '@/stores/PathInfo'
 import { join } from '@tauri-apps/api/path'
 import { convertFileSrc } from '@tauri-apps/api/tauri'
-import { readTextFile } from '@tauri-apps/api/fs'
+import { MaaBoConfigStore } from '@/stores/MaaBoConfig'
+import { MaaBoRTStore, type DepotArkntools, type DepotPenguin } from '@/stores/MaaBoRT'
+
+const maaBoRTStore = MaaBoRTStore()
+const maaBoConfigStore = MaaBoConfigStore()
+const rt = maaBoRTStore.GetCurrentMaaBoRT()
+const config = maaBoConfigStore.user_configs[maaBoRTStore.selectTab]
 
 const pathInfoStore = PathInfoStore()
 
@@ -85,18 +85,6 @@ const changeText = () => {
   container.style.scrollBehavior = 'smooth'
   container.scrollTop = container.scrollHeight
 }
-
-const toolsConfigStore = ToolsConfigStore()
-const toolsRunningTimeStore = ToolsRunningTimeStore()
-const userConfigStore = UserConfigStore()
-const selectConfig = userConfigStore.GetSelectedConfig()
-const tools_config = ref(toolsConfigStore.GetToolsConfig(userConfigStore.GetSelectedConfig().value))
-const tools_rt = ref<ToolsRunningTimeInfo>(
-  toolsRunningTimeStore.GetRunningTime(selectConfig.value) as ToolsRunningTimeInfo
-)
-const config = ref<UserConfig>(
-  userConfigStore.GetConfig(userConfigStore.GetSelectedConfig().value) as UserConfig
-)
 
 interface Payload {
   code: number
@@ -112,63 +100,45 @@ interface Infomation {
 }
 const infomations = ref<Infomation[]>([])
 
-interface Item {
-  classifyType: string
-  description: string
-  icon: string
-  name: string
-  sortId: number
-  usage: string
-}
-
-interface ItemIndex {
-  [key: string]: Item
-}
-
 const itemInfo = ref<ItemIndex>({})
 
 const start = async () => {
-  tools_config.value.depot.params.enable = true
-  tools_rt.value.depot_penguin = { '@type': '', items: [] }
-  tools_rt.value.depot_arkntools = {}
-  if (tools_rt.value.depot_listen) {
-    tools_rt.value.depot_listen()
+  config.tools!.depot.params.enable = true
+  rt.depot_penguin = { '@type': '', items: [] }
+  rt.depot_arkntools = {}
+  if (rt.depot_listen) {
+    rt.depot_listen()
   }
-  config.value.status = 1
-  tools_rt.value.depot_listen = await listen(
-    selectConfig.value + '_tools_depot_handle',
-    async (event: any) => {
-      const payload = event.payload as Payload
-      if (payload.msg.startsWith('      "data": "')) {
-        const jsonString = payload.msg.slice(13, payload.msg.length - 1)
-        if (
-          payload.msg.startsWith('      "data": "{\\"@type\\":\\"@penguin-statistics/depot\\",')
-        ) {
-          const jsonObject: DepotPenguin = JSON.parse(JSON.parse(jsonString))
-          tools_rt.value.depot_penguin = jsonObject
-        } else {
-          const jsonObject: DepotArkntools = JSON.parse(JSON.parse(jsonString))
-          tools_rt.value.depot_arkntools = jsonObject
-          const newInfomations = ref<Infomation[]>([])
-          for (const [item_id, count] of Object.entries(jsonObject)) {
-            newInfomations.value.push({
-              item_id: item_id,
-              count: count,
-              img_src: convertFileSrc(await join(imgPath.value, itemInfo.value[item_id].icon)),
-              name: itemInfo.value[item_id].name
-            })
-          }
-          infomations.value = newInfomations.value
+  config.status = 1
+  rt.depot_listen = await listen(config.name + '_tools_depot_handle', async (event: any) => {
+    const payload = event.payload as Payload
+    if (payload.msg.startsWith('      "data": "')) {
+      const jsonString = payload.msg.slice(13, payload.msg.length - 1)
+      if (payload.msg.startsWith('      "data": "{\\"@type\\":\\"@penguin-statistics/depot\\",')) {
+        const jsonObject: DepotPenguin = JSON.parse(JSON.parse(jsonString))
+        rt.depot_penguin = jsonObject
+      } else {
+        const jsonObject: DepotArkntools = JSON.parse(JSON.parse(jsonString))
+        rt.depot_arkntools = jsonObject
+        const newInfomations = ref<Infomation[]>([])
+        for (const [item_id, count] of Object.entries(jsonObject)) {
+          newInfomations.value.push({
+            item_id: item_id,
+            count: count,
+            img_src: convertFileSrc(await join(imgPath.value, itemInfo.value[item_id].icon)),
+            name: itemInfo.value[item_id].name
+          })
         }
-      }
-
-      changeText()
-      if (payload.code !== 0) {
-        config.value.status = 0
+        infomations.value = newInfomations.value
       }
     }
-  )
-  await ToolsExecute(selectConfig.value, 'depot', { tasks: [tools_config.value.depot] })
+
+    changeText()
+    if (payload.code !== 0) {
+      config.status = 0
+    }
+  })
+  await ToolsExecute(config.name, 'depot', { tasks: [config.tools!.depot] })
 }
 
 onMounted(async () => {
@@ -179,11 +149,11 @@ onMounted(async () => {
     'template',
     'items'
   )
-  itemInfo.value = JSON.parse(
-    await readTextFile(
-      await join(pathInfoStore.path.maa_data_dir, 'MaaResource', 'resource', 'item_index.json')
-    )
-  )
+  await GetItemIndex().then((res) => {
+    if (res) {
+      itemInfo.value = res
+    }
+  })
   changeText()
 })
 </script>

@@ -1,6 +1,6 @@
 <template>
   <el-dialog
-    v-model="dialogVisible['Infrast']"
+    v-model="rt.setting_dialog['Infrast']"
     title="基建换班设置"
     center
     align-center
@@ -13,7 +13,12 @@
       style="max-width: 350px; padding-left: 2px; padding-right: 2px; padding-top: 2px"
     >
       <el-form-item label="无人机用途">
-        <el-select v-model="params.drones" :disabled="userConfig!.status == 1 && params.enable">
+        <el-select
+          v-model="(config.tasks[rt.setting_index] as InfrastTask).params.drones"
+          :disabled="
+            config.status == 1 && (config.tasks[rt.setting_index] as InfrastTask).params.enable
+          "
+        >
           <el-option label="不使用" value="_NotUse" default />
           <el-option label="贸易站-龙门币" value="Money" />
           <el-option label="贸易站-合成玉" value="SyntheticJade" />
@@ -31,14 +36,18 @@
           :max="100"
           :step="1"
           @change="handleThreshold"
-          :disabled="userConfig!.status == 1 && params.enable"
+          :disabled="
+            config.status == 1 && (config.tasks[rt.setting_index] as InfrastTask).params.enable
+          "
         />
       </el-form-item>
       <div class="infrast-box">
         <el-checkbox-group
-          v-model="params.facility"
+          v-model="(config.tasks[rt.setting_index] as InfrastTask).params.facility"
           @change="handleCheckedFacilityChange"
-          :disabled="userConfig!.status == 1 && params.enable"
+          :disabled="
+            config.status == 1 && (config.tasks[rt.setting_index] as InfrastTask).params.enable
+          "
         >
           <el-checkbox
             v-for="fname in facilitys"
@@ -50,20 +59,26 @@
       </div>
       <el-form-item label="宿舍空余位置蹭信赖">
         <el-switch
-          v-model="params.dorm_trust_enabled"
-          :disabled="userConfig!.status == 1 && params.enable"
+          v-model="(config.tasks[rt.setting_index] as InfrastTask).params.dorm_trust_enabled"
+          :disabled="
+            config.status == 1 && (config.tasks[rt.setting_index] as InfrastTask).params.enable
+          "
         />
       </el-form-item>
       <el-form-item label="不将已进驻的干员放入宿舍">
         <el-switch
-          v-model="params.dorm_notstationed_enabled"
-          :disabled="userConfig!.status == 1 && params.enable"
+          v-model="(config.tasks[rt.setting_index] as InfrastTask).params.dorm_notstationed_enabled"
+          :disabled="
+            config.status == 1 && (config.tasks[rt.setting_index] as InfrastTask).params.enable
+          "
         />
       </el-form-item>
       <el-form-item label="原石碎片自动补货">
         <el-switch
-          v-model="params.replenish"
-          :disabled="userConfig!.status == 1 && params.enable"
+          v-model="(config.tasks[rt.setting_index] as InfrastTask).params.replenish"
+          :disabled="
+            config.status == 1 && (config.tasks[rt.setting_index] as InfrastTask).params.enable
+          "
         />
       </el-form-item>
     </el-form>
@@ -72,22 +87,24 @@
 </template>
 
 <script setup lang="ts">
+import { MaaBoConfigStore } from '@/stores/MaaBoConfig'
+import { MaaBoRTStore } from '@/stores/MaaBoRT'
+import type { InfrastTask } from '@/stores/tasks/Infrast'
 import { ref } from 'vue'
-import { type InfrastTaskParams } from '@/stores/tasks/Infrast'
-import { UserConfigStore } from '@/stores/UserConfig'
 
-const userConfigStore = UserConfigStore()
-const dialogVisible = ref(userConfigStore.GetSettingDialogObj())
-const params = ref<InfrastTaskParams>(userConfigStore.GetTaskParams('Infrast') as InfrastTaskParams)
-const userConfig = ref(userConfigStore.GetConfig(userConfigStore.selectedConfig))
+const maaBoRTStore = MaaBoRTStore()
+const maaBoConfigStore = MaaBoConfigStore()
+const rt = maaBoRTStore.GetCurrentMaaBoRT()
+const config = maaBoConfigStore.user_configs[maaBoRTStore.selectTab]
+
 const saveSetting = () => {
-  if (userConfig.value!.status === 0) {
-    userConfigStore.SaveTask()
-  }
-  dialogVisible.value['Infrast'] = false
+  rt.setting_dialog['Infrast'] = false
 }
 
-const threshold = ref(params.value.threshold * 100 - ((params.value.threshold * 100) % 1))
+const threshold = ref(
+  (config.tasks[rt.setting_index] as InfrastTask).params.threshold * 100 -
+    (((config.tasks[rt.setting_index] as InfrastTask).params.threshold * 100) % 1)
+)
 
 const formatTooltip = (val: number) => {
   return val + '%'
@@ -104,11 +121,11 @@ const facilitys = new Map<string, string>([
 ])
 
 const handleCheckedFacilityChange = (value: string[]) => {
-  params.value.facility = value
+  ;(config.tasks[rt.setting_index] as InfrastTask).params.facility = value
 }
 
 const handleThreshold = () => {
-  params.value.threshold = threshold.value / 100
+  ;(config.tasks[rt.setting_index] as InfrastTask).params.threshold = threshold.value / 100
 }
 </script>
 

@@ -1,6 +1,6 @@
 <template>
   <el-dialog
-    v-model="dialogVisible['StartUp']"
+    v-model="rt.setting_dialog['StartUp']"
     title="开始唤醒设置"
     center
     destroy-on-close
@@ -13,21 +13,27 @@
     >
       <el-form-item label="账号切换">
         <el-input
-          v-model="params.account_name"
-          :disabled="userConfig!.status == 1 && params.enable"
+          v-model="(config.tasks[rt.setting_index] as StartUpTask).params.account_name"
+          :disabled="
+            config.status == 1 && (config.tasks[rt.setting_index] as StartUpTask).params.enable
+          "
         />
       </el-form-item>
       <el-form-item label="自动启动游戏">
         <el-switch
-          v-model="params.start_game_enabled"
-          :disabled="userConfig!.status == 1 && params.enable"
+          v-model="(config.tasks[rt.setting_index] as StartUpTask).params.start_game_enabled"
+          :disabled="
+            config.status == 1 && (config.tasks[rt.setting_index] as StartUpTask).params.enable
+          "
         />
       </el-form-item>
       <el-form-item label="客户端版本">
         <el-select
-          v-model="params.client_type"
+          v-model="(config.tasks[rt.setting_index] as StartUpTask).params.client_type"
           placeholder=""
-          :disabled="userConfig!.status == 1 && params.enable"
+          :disabled="
+            config.status == 1 && (config.tasks[rt.setting_index] as StartUpTask).params.enable
+          "
         >
           <el-option label="官服" value="Official" />
           <el-option label="B服" value="Bilibili" />
@@ -43,20 +49,17 @@
 </template>
 
 <script setup lang="ts">
-import { UserConfigStore } from '@/stores/UserConfig'
-import { type StartUpTaskParams } from '@/stores/tasks/StartUp'
-import { ref } from 'vue'
-const userConfigStore = UserConfigStore()
+import { MaaBoConfigStore } from '@/stores/MaaBoConfig'
+import { MaaBoRTStore } from '@/stores/MaaBoRT'
+import type { StartUpTask } from '@/stores/tasks/StartUp'
 
-const userConfig = ref(userConfigStore.GetConfig(userConfigStore.selectedConfig))
+const maaBoRTStore = MaaBoRTStore()
+const maaBoConfigStore = MaaBoConfigStore()
+const rt = maaBoRTStore.GetCurrentMaaBoRT()
+const config = maaBoConfigStore.user_configs[maaBoRTStore.selectTab]
 
-const dialogVisible = ref(userConfigStore.GetSettingDialogObj())
-const params = ref<StartUpTaskParams>(userConfigStore.GetTaskParams('StartUp') as StartUpTaskParams)
 const saveSetting = () => {
-  if (userConfig.value!.status === 0) {
-    userConfigStore.SaveTask()
-  }
-  dialogVisible.value['StartUp'] = false
+  rt.setting_dialog['StartUp'] = false
 }
 </script>
 

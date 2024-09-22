@@ -1,7 +1,12 @@
 <template>
-  <el-tabs v-model="tabsValue" class="tools-tabs" type="border-card" tabPosition="bottom">
+  <el-tabs
+    v-model="maaboRTStore.selectTab"
+    class="tools-tabs"
+    type="border-card"
+    tabPosition="bottom"
+  >
     <el-tab-pane
-      v-for="config in userConfigStore.configs"
+      v-for="config in maaboConfigStore.user_configs"
       :key="config.name"
       :name="config.name"
       class="config-tabs"
@@ -22,10 +27,10 @@
 </template>
 <script setup lang="ts">
 import MaaTools from '@/components/MaaTools.vue'
-import { UserConfigStore } from '@/stores/UserConfig'
-
-const userConfigStore = UserConfigStore()
-const tabsValue = userConfigStore.GetSelectedConfig()
+import { MaaBoConfigStore } from '@/stores/MaaBoConfig'
+import { MaaBoRTStore } from '@/stores/MaaBoRT'
+const maaboRTStore = MaaBoRTStore()
+const maaboConfigStore = MaaBoConfigStore()
 </script>
 
 <style lang="scss" scoped></style>

@@ -1,6 +1,6 @@
 <template>
   <el-dialog
-    v-model="dialogVisible['Fight']"
+    v-model="rt.setting_dialog['Fight']"
     title="刷理智设置"
     center
     align-center
@@ -16,9 +16,11 @@
         <el-tooltip class="box-item" effect="dark" content="填0代表不吃兄弟" placement="top">
           <el-input-number
             style="width: auto"
-            v-model="params.medicine"
+            v-model="(config.tasks[rt.setting_index] as FightTask).params.medicine"
             controls-position="right"
-            :disabled="userConfig!.status == 1 && params.enable"
+            :disabled="
+              config.status == 1 && (config.tasks[rt.setting_index] as FightTask).params.enable
+            "
           />
         </el-tooltip>
       </el-form-item>
@@ -26,9 +28,11 @@
       <el-form-item label="吃48小时内过期理智药">
         <el-input-number
           style="width: auto"
-          v-model="params.expiring_medicine"
+          v-model="(config.tasks[rt.setting_index] as FightTask).params.expiring_medicine"
           controls-position="right"
-          :disabled="userConfig!.status == 1 && params.enable"
+          :disabled="
+            config.status == 1 && (config.tasks[rt.setting_index] as FightTask).params.enable
+          "
         />
       </el-form-item>
 
@@ -36,9 +40,11 @@
         <el-tooltip class="box-item" effect="dark" content="填0代表不吃兄弟" placement="top">
           <el-input-number
             style="width: auto"
-            v-model="params.stone"
+            v-model="(config.tasks[rt.setting_index] as FightTask).params.stone"
             controls-position="right"
-            :disabled="userConfig!.status == 1 && params.enable"
+            :disabled="
+              config.status == 1 && (config.tasks[rt.setting_index] as FightTask).params.enable
+            "
           />
         </el-tooltip>
       </el-form-item>
@@ -61,7 +67,9 @@
           :remote-method="fetchDrops"
           :loading="dropsLoading"
           v-model="drops_value"
-          :disabled="userConfig!.status == 1 && params.enable"
+          :disabled="
+            config.status == 1 && (config.tasks[rt.setting_index] as FightTask).params.enable
+          "
         >
           <el-option
             v-for="item in drops_options"
@@ -76,7 +84,9 @@
           style="width: auto"
           v-model="drops_times"
           controls-position="right"
-          :disabled="userConfig!.status == 1 && params.enable"
+          :disabled="
+            config.status == 1 && (config.tasks[rt.setting_index] as FightTask).params.enable
+          "
         />
       </el-form-item>
     </el-form>
@@ -98,7 +108,9 @@
           remote
           :remote-method="fetchStages"
           v-model="stage_value"
-          :disabled="userConfig!.status == 1 && params.enable"
+          :disabled="
+            config.status == 1 && (config.tasks[rt.setting_index] as FightTask).params.enable
+          "
           :loading="StageLoading"
         >
           <el-option
@@ -112,17 +124,21 @@
       <el-form-item label="指定次数">
         <el-input-number
           style="width: auto"
-          v-model="params.times"
+          v-model="(config.tasks[rt.setting_index] as FightTask).params.times"
           :min="1"
           controls-position="right"
-          :disabled="userConfig!.status == 1 && params.enable"
+          :disabled="
+            config.status == 1 && (config.tasks[rt.setting_index] as FightTask).params.enable
+          "
         />
       </el-form-item>
       <el-form-item label="连战次数">
         <el-select
           style="width: 152px"
-          v-model="params.series"
-          :disabled="userConfig!.status == 1 && params.enable"
+          v-model="(config.tasks[rt.setting_index] as FightTask).params.series"
+          :disabled="
+            config.status == 1 && (config.tasks[rt.setting_index] as FightTask).params.enable
+          "
         >
           <el-option v-for="series in 6" :key="series" :label="series" :value="series" />
         </el-select>
@@ -133,27 +149,26 @@
 </template>
 
 <script setup lang="ts">
-import { UserConfigStore } from '@/stores/UserConfig'
-import { type FightTaskParams } from '@/stores/tasks/Fight'
-import { onMounted, ref } from 'vue'
-import GetFightItems from '@/apis/ItemIndex'
-import { type FightItem } from '@/apis/ItemIndex'
+import type { StageItem } from '@/apis/FightStages'
 import GetFightStages from '@/apis/FightStages'
-import { type StageItem } from '@/apis/FightStages'
-const userConfigStore = UserConfigStore()
-const dialogVisible = ref(userConfigStore.GetSettingDialogObj())
-const params = ref<FightTaskParams>(userConfigStore.GetTaskParams('Fight') as FightTaskParams)
-const userConfig = ref(userConfigStore.GetConfig(userConfigStore.selectedConfig))
+import type { FightItem } from '@/apis/ItemIndex'
+import GetFightItems from '@/apis/ItemIndex'
+import { MaaBoConfigStore } from '@/stores/MaaBoConfig'
+import { MaaBoRTStore } from '@/stores/MaaBoRT'
+import type { FightTask } from '@/stores/tasks/Fight'
+import { onMounted, ref } from 'vue'
+
+const maaBoRTStore = MaaBoRTStore()
+const maaBoConfigStore = MaaBoConfigStore()
+const rt = maaBoRTStore.GetCurrentMaaBoRT()
+const config = maaBoConfigStore.user_configs[maaBoRTStore.selectTab]
 
 const saveSetting = () => {
   drops_set()
   if (stage_value.value !== 'NotSpecified') {
-    params.value.stage = stage_value.value
+    ;(config.tasks[rt.setting_index] as FightTask).params.stage = stage_value.value
   }
-  if (userConfig.value!.status === 0) {
-    userConfigStore.SaveTask()
-  }
-  dialogVisible.value['Fight'] = false
+  rt.setting_dialog['Fight'] = false
 }
 
 const drops_value = ref('NotSpecified')
@@ -177,12 +192,12 @@ const drops_set = () => {
   if (drops_value.value && drops_value.value !== 'NotSpecified') {
     const drops_value_value = drops_value.value
     const drops_times_value = drops_times.value
-    params.value.drops = {
+    ;(config.tasks[rt.setting_index] as FightTask).params.drops = {
       [drops_value_value]: drops_times_value
     }
   } else {
-    if (params.value.drops) {
-      delete params.value.drops
+    if ((config.tasks[rt.setting_index] as FightTask).params.drops) {
+      delete (config.tasks[rt.setting_index] as FightTask).params.drops
     }
   }
 }
@@ -211,11 +226,11 @@ onMounted(() => {
   fetchDrops('')
   fetchStages('')
 
-  if (params.value.drops) {
-    drops_value.value = Object.keys(params.value.drops!)[0]
+  if ((config.tasks[rt.setting_index] as FightTask).params.drops) {
+    drops_value.value = Object.keys((config.tasks[rt.setting_index] as FightTask).params.drops!)[0]
   }
-  if (params.value.stage !== '') {
-    stage_value.value = params.value.stage
+  if ((config.tasks[rt.setting_index] as FightTask).params.stage !== '') {
+    stage_value.value = (config.tasks[rt.setting_index] as FightTask).params.stage
   }
 })
 </script>

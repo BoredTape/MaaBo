@@ -1,6 +1,6 @@
 <template>
   <el-dialog
-    v-model="dialogVisible['Roguelike']"
+    v-model="rt.setting_dialog['Roguelike']"
     title="无限肉鸽设置"
     center
     align-center
@@ -16,9 +16,12 @@
         >
           <el-form-item label="肉鸽名">
             <el-select
-              v-model="params.theme"
+              v-model="(config.tasks[rt.setting_index] as RoguelikeTask).params.theme"
               style="width: 150px"
-              :disabled="userConfig!.status == 1 && params.enable"
+              :disabled="
+                config.status == 1 &&
+                (config.tasks[rt.setting_index] as RoguelikeTask).params.enable
+              "
             >
               <el-option label="傀影与猩红血钻" value="Phantom" default />
               <el-option label="水月与深蓝之树" value="Mizuki" />
@@ -28,18 +31,24 @@
           </el-form-item>
           <el-form-item label="开始探索次数">
             <el-input-number
-              v-model="params.starts_count"
+              v-model="(config.tasks[rt.setting_index] as RoguelikeTask).params.starts_count"
               controls-position="right"
-              :disabled="userConfig!.status == 1 && params.enable"
+              :disabled="
+                config.status == 1 &&
+                (config.tasks[rt.setting_index] as RoguelikeTask).params.enable
+              "
             />
           </el-form-item>
 
           <el-form-item label="模式">
             <el-select
-              v-model="params.mode"
+              v-model="(config.tasks[rt.setting_index] as RoguelikeTask).params.mode"
               style="width: 150px"
               @change="modeChange"
-              :disabled="userConfig!.status == 1 && params.enable"
+              :disabled="
+                config.status == 1 &&
+                (config.tasks[rt.setting_index] as RoguelikeTask).params.enable
+              "
             >
               <el-option label="刷蜡烛/通关" :value="0" default />
               <el-option label="刷源石锭" :value="1" />
@@ -61,14 +70,27 @@
         >
           <el-form-item label="凹开局干员精二直升">
             <el-switch
-              v-model="params.start_with_elite_two"
-              :disabled="userConfig!.status == 1 && params.enable"
+              v-model="
+                (config.tasks[rt.setting_index] as RoguelikeTask).params.start_with_elite_two
+              "
+              :disabled="
+                config.status == 1 &&
+                (config.tasks[rt.setting_index] as RoguelikeTask).params.enable
+              "
             />
           </el-form-item>
-          <el-form-item label="直升且不进行作战" v-show="params.start_with_elite_two">
+          <el-form-item
+            label="直升且不进行作战"
+            v-show="(config.tasks[rt.setting_index] as RoguelikeTask).params.start_with_elite_two"
+          >
             <el-switch
-              v-model="params.only_start_with_elite_two"
-              :disabled="userConfig!.status == 1 && params.enable"
+              v-model="
+                (config.tasks[rt.setting_index] as RoguelikeTask).params.only_start_with_elite_two
+              "
+              :disabled="
+                config.status == 1 &&
+                (config.tasks[rt.setting_index] as RoguelikeTask).params.enable
+              "
             />
           </el-form-item>
         </el-form>
@@ -85,27 +107,47 @@
         >
           <el-form-item label="使用密文板">
             <el-switch
-              v-model="params.use_foldartal"
-              :disabled="userConfig!.status == 1 && params.enable"
+              v-model="(config.tasks[rt.setting_index] as RoguelikeTask).params.use_foldartal"
+              :disabled="
+                config.status == 1 &&
+                (config.tasks[rt.setting_index] as RoguelikeTask).params.enable
+              "
             />
           </el-form-item>
           <el-form-item label="检测坍缩范式">
             <el-switch
-              v-model="params.check_collapsal_paradigms"
-              :disabled="userConfig!.status == 1 && params.enable"
+              v-model="
+                (config.tasks[rt.setting_index] as RoguelikeTask).params.check_collapsal_paradigms
+              "
+              :disabled="
+                config.status == 1 &&
+                (config.tasks[rt.setting_index] as RoguelikeTask).params.enable
+              "
             />
           </el-form-item>
           <el-form-item label="执行坍缩范式防漏措施" v-show="mode5Show">
             <el-switch
-              v-model="params.double_check_collapsal_paradigms"
-              :disabled="userConfig!.status == 1 && params.enable"
+              v-model="
+                (config.tasks[rt.setting_index] as RoguelikeTask).params
+                  .double_check_collapsal_paradigms
+              "
+              :disabled="
+                config.status == 1 &&
+                (config.tasks[rt.setting_index] as RoguelikeTask).params.enable
+              "
             />
           </el-form-item>
           <el-form-item label="坍缩范式">
             <el-select
-              v-model="params.expected_collapsal_paradigms"
+              v-model="
+                (config.tasks[rt.setting_index] as RoguelikeTask).params
+                  .expected_collapsal_paradigms
+              "
               multiple
-              :disabled="userConfig!.status == 1 && params.enable"
+              :disabled="
+                config.status == 1 &&
+                (config.tasks[rt.setting_index] as RoguelikeTask).params.enable
+              "
             >
               <el-option label="目空一些" value="目空一些" />
               <el-option label="睁眼瞎" value="睁眼瞎" />
@@ -121,9 +163,12 @@
         >
           <el-form-item label="开局分队">
             <el-select
-              v-model="params.squad"
+              v-model="(config.tasks[rt.setting_index] as RoguelikeTask).params.squad"
               style="width: 150px"
-              :disabled="userConfig!.status == 1 && params.enable"
+              :disabled="
+                config.status == 1 &&
+                (config.tasks[rt.setting_index] as RoguelikeTask).params.enable
+              "
             >
               <el-option label="心胜于物分队" value="心胜于物分队" />
               <el-option label="物尽其用分队" value="物尽其用分队" />
@@ -150,9 +195,12 @@
           </el-form-item>
           <el-form-item label="开局职业组">
             <el-select
-              v-model="params.roles"
+              v-model="(config.tasks[rt.setting_index] as RoguelikeTask).params.roles"
               style="width: 150px"
-              :disabled="userConfig!.status == 1 && params.enable"
+              :disabled="
+                config.status == 1 &&
+                (config.tasks[rt.setting_index] as RoguelikeTask).params.enable
+              "
             >
               <el-option label="先手必胜(先锋、狙击、特种)" value="先手必胜" />
               <el-option label="取长补短(近卫、辅助、医疗)" value="取长补短" default />
@@ -162,9 +210,12 @@
           </el-form-item>
           <el-form-item label="开局干员名">
             <el-input
-              v-model="params.core_char"
+              v-model="(config.tasks[rt.setting_index] as RoguelikeTask).params.core_char"
               style="width: 150px"
-              :disabled="userConfig!.status == 1 && params.enable"
+              :disabled="
+                config.status == 1 &&
+                (config.tasks[rt.setting_index] as RoguelikeTask).params.enable
+              "
             />
           </el-form-item>
         </el-form>
@@ -176,9 +227,12 @@
         >
           <el-form-item label="是否投资源石锭">
             <el-switch
-              v-model="params.investment_enabled"
+              v-model="(config.tasks[rt.setting_index] as RoguelikeTask).params.investment_enabled"
               @change="investmentChange"
-              :disabled="userConfig!.status == 1 && params.enable"
+              :disabled="
+                config.status == 1 &&
+                (config.tasks[rt.setting_index] as RoguelikeTask).params.enable
+              "
             />
           </el-form-item>
         </el-form>
@@ -194,35 +248,59 @@
         >
           <el-form-item label="投资源石锭次数">
             <el-input-number
-              v-model="params.investments_count"
+              v-model="(config.tasks[rt.setting_index] as RoguelikeTask).params.investments_count"
               controls-position="right"
-              :disabled="userConfig!.status == 1 && params.enable"
+              :disabled="
+                config.status == 1 &&
+                (config.tasks[rt.setting_index] as RoguelikeTask).params.enable
+              "
             />
           </el-form-item>
           <el-form-item label="投资满了自动停止">
             <el-switch
-              v-model="params.stop_when_investment_full"
-              :disabled="userConfig!.status == 1 && params.enable"
+              v-model="
+                (config.tasks[rt.setting_index] as RoguelikeTask).params.stop_when_investment_full
+              "
+              :disabled="
+                config.status == 1 &&
+                (config.tasks[rt.setting_index] as RoguelikeTask).params.enable
+              "
             />
           </el-form-item>
         </el-form>
         <el-form label-width="152px">
           <el-form-item label="开局干员选助战干员">
             <el-switch
-              v-model="params.use_support"
-              :disabled="userConfig!.status == 1 && params.enable"
+              v-model="(config.tasks[rt.setting_index] as RoguelikeTask).params.use_support"
+              :disabled="
+                config.status == 1 &&
+                (config.tasks[rt.setting_index] as RoguelikeTask).params.enable
+              "
             />
           </el-form-item>
-          <el-form-item label="选非好友助战干员" v-show="params.use_support">
+          <el-form-item
+            label="选非好友助战干员"
+            v-show="(config.tasks[rt.setting_index] as RoguelikeTask).params.use_support"
+          >
             <el-switch
-              v-model="params.use_nonfriend_support"
-              :disabled="userConfig!.status == 1 && params.enable"
+              v-model="
+                (config.tasks[rt.setting_index] as RoguelikeTask).params.use_nonfriend_support
+              "
+              :disabled="
+                config.status == 1 &&
+                (config.tasks[rt.setting_index] as RoguelikeTask).params.enable
+              "
             />
           </el-form-item>
           <el-form-item label="用骰子刷新商店购买特殊商品">
             <el-switch
-              v-model="params.refresh_trader_with_dice"
-              :disabled="userConfig!.status == 1 && params.enable"
+              v-model="
+                (config.tasks[rt.setting_index] as RoguelikeTask).params.refresh_trader_with_dice
+              "
+              :disabled="
+                config.status == 1 &&
+                (config.tasks[rt.setting_index] as RoguelikeTask).params.enable
+              "
             />
           </el-form-item>
         </el-form>
@@ -233,45 +311,47 @@
 </template>
 
 <script setup lang="ts">
-import { type RoguelikeTaskParams } from '@/stores/tasks/Roguelike'
-import { UserConfigStore } from '@/stores/UserConfig'
+import { MaaBoConfigStore } from '@/stores/MaaBoConfig'
+import { MaaBoRTStore } from '@/stores/MaaBoRT'
+import { type RoguelikeTask } from '@/stores/tasks/Roguelike'
 import { ref } from 'vue'
-const userConfigStore = UserConfigStore()
-const userConfig = ref(userConfigStore.GetConfig(userConfigStore.selectedConfig))
-const dialogVisible = ref(userConfigStore.GetSettingDialogObj())
-const params = ref<RoguelikeTaskParams>(
-  userConfigStore.GetTaskParams('Roguelike') as RoguelikeTaskParams
-)
+
+const maaBoRTStore = MaaBoRTStore()
+const maaBoConfigStore = MaaBoConfigStore()
+const rt = maaBoRTStore.GetCurrentMaaBoRT()
+const config = maaBoConfigStore.user_configs[maaBoRTStore.selectTab]
+
 const saveSetting = () => {
-  if (userConfig.value!.status === 0) {
-    userConfigStore.SaveTask()
-  }
-  dialogVisible.value['Roguelike'] = false
+  rt.setting_dialog['Roguelike'] = false
 }
 
 const activeName = ref('Normal')
 
-const investmentShow = ref(params.value.investment_enabled)
+const investmentShow = ref(
+  (config.tasks[rt.setting_index] as RoguelikeTask).params.investment_enabled
+)
 const investmentChange = () => {
-  investmentShow.value = params.value.investment_enabled
+  investmentShow.value = (config.tasks[rt.setting_index] as RoguelikeTask).params.investment_enabled
 }
 
 const mode5Show = ref(false)
 const mode4Show = ref(false)
 const modeChange = () => {
-  if (params.value.mode === 5) {
-    params.value.use_foldartal = false
-    params.value.check_collapsal_paradigms = true
-    params.value.double_check_collapsal_paradigms = true
+  if ((config.tasks[rt.setting_index] as RoguelikeTask).params.mode === 5) {
+    ;(config.tasks[rt.setting_index] as RoguelikeTask).params.use_foldartal = false
+    ;(config.tasks[rt.setting_index] as RoguelikeTask).params.check_collapsal_paradigms = true
+    ;(config.tasks[rt.setting_index] as RoguelikeTask).params.double_check_collapsal_paradigms =
+      true
     mode5Show.value = true
   } else {
-    params.value.use_foldartal = true
-    params.value.check_collapsal_paradigms = false
-    params.value.double_check_collapsal_paradigms = false
+    ;(config.tasks[rt.setting_index] as RoguelikeTask).params.use_foldartal = true
+    ;(config.tasks[rt.setting_index] as RoguelikeTask).params.check_collapsal_paradigms = false
+    ;(config.tasks[rt.setting_index] as RoguelikeTask).params.double_check_collapsal_paradigms =
+      false
     mode5Show.value = false
   }
 
-  if (params.value.mode === 4) {
+  if ((config.tasks[rt.setting_index] as RoguelikeTask).params.mode === 4) {
     mode4Show.value = true
   } else {
     mode4Show.value = false
