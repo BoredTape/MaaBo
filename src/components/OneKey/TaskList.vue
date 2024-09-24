@@ -1,6 +1,6 @@
 <template>
   <div class="table-box">
-    <el-scrollbar height="352px">
+    <el-scrollbar height="350px">
       <el-table
         ref="tableRef"
         :data="config.tasks"
@@ -68,63 +68,63 @@
       </el-dropdown>
     </div>
   </div>
-  <div class="bottom-box">
-    <el-row>
-      <el-col :span="6" style="text-align: center">
+  <!-- <div class="bottom-box"> -->
+  <el-row>
+    <el-col :span="6" style="text-align: center">
+      <el-button
+        size="small"
+        style="border: none; line-height: 40px; color: var(--el-color-primary)"
+        class="maa-button left-button"
+        @click="rt.setting_dialog['BeforeScript'] = true"
+      >
+        种草前
+      </el-button>
+    </el-col>
+    <el-col :span="6" style="text-align: center">
+      <el-button
+        size="small"
+        style="border: none; line-height: 40px; color: var(--el-color-primary)"
+        class="maa-button left-button"
+        @click="rt.setting_dialog['AfterScript'] = true"
+      >
+        结束后
+      </el-button>
+    </el-col>
+    <el-col :span="12"> </el-col>
+  </el-row>
+  <el-row>
+    <el-col :span="12" style="text-align: center">
+      <el-button style="width: 150px" size="large" round class="start-button" @click="start">
+        {{ config.status === 0 ? '嘻嘻' : '不嘻嘻' }}
+      </el-button>
+    </el-col>
+    <el-col :span="12" style="text-align: center; line-height: 38px">
+      <el-tooltip effect="dark" content="MaaCore设置" placement="top-start">
         <el-button
+          :icon="Setting"
           size="small"
-          style="border: none; line-height: 40px; color: var(--el-color-primary)"
+          round
           class="maa-button left-button"
-          @click="rt.setting_dialog['BeforeScript'] = true"
+          @click="rt.setting_dialog['MaaCore'] = true"
         >
-          种草前
+          MaaCore设置
         </el-button>
-      </el-col>
-      <el-col :span="6" style="text-align: center">
-        <el-button
-          size="small"
-          style="border: none; line-height: 40px; color: var(--el-color-primary)"
-          class="maa-button left-button"
-          @click="rt.setting_dialog['AfterScript'] = true"
-        >
-          结束后
-        </el-button>
-      </el-col>
-      <el-col :span="12"> </el-col>
-    </el-row>
-    <el-row>
-      <el-col :span="12" style="text-align: center">
-        <el-button style="width: 150px" size="large" round class="start-button" @click="start">
-          {{ config.status === 0 ? '嘻嘻' : '不嘻嘻' }}
-        </el-button>
-      </el-col>
-      <el-col :span="12" style="text-align: center">
-        <el-tooltip effect="dark" content="MaaCore设置" placement="top-start">
-          <el-button
-            :icon="Setting"
-            size="small"
-            round
-            class="maa-button left-button"
-            @click="rt.setting_dialog['MaaCore'] = true"
-          >
-            MaaCore设置
-          </el-button>
-        </el-tooltip>
-      </el-col>
-      <el-col :span="1"></el-col>
-    </el-row>
-    <el-dialog
-      v-model="rt.setting_dialog['MaaCore']"
-      title="MaaCore配置"
-      center
-      destroy-on-close
-      style="width: 350px"
-      :append-to-body="true"
-      :before-close="coreSettingSave"
-    >
-      <MaaCoreSetting />
-    </el-dialog>
-  </div>
+      </el-tooltip>
+    </el-col>
+    <el-col :span="1"></el-col>
+  </el-row>
+  <el-dialog
+    v-model="rt.setting_dialog['MaaCore']"
+    title="MaaCore配置"
+    center
+    destroy-on-close
+    style="width: 350px"
+    :append-to-body="true"
+    :before-close="coreSettingSave"
+  >
+    <MaaCoreSetting />
+  </el-dialog>
+  <!-- </div> -->
 </template>
 <script setup lang="ts">
 import { onMounted, ref } from 'vue'
@@ -295,10 +295,10 @@ onMounted(() => {
   --el-table-border-color: none;
   border: none;
 }
-.bottom-box {
-  line-height: 40px;
-  height: 45px;
-}
+// .bottom-box {
+//   line-height: 82px;
+//   height: 82px;
+// }
 .el-dropdown-link {
   cursor: pointer;
   color: var(--el-color-primary);

@@ -57,7 +57,7 @@ onMounted(() => {
 <style lang="scss" scoped>
 .right-msg {
   font-size: 11px;
-  min-height: 384px;
+  min-height: 382px;
   border: 1px solid var(--el-border-color);
 }
 div.button-box {

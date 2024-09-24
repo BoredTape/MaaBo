@@ -37,5 +37,6 @@ const maaboConfigStore = MaaBoConfigStore()
 <style lang="scss">
 .tools-tabs > .el-tabs__content {
   padding-top: 0px;
+  padding-bottom: 0px;
 }
 </style>
