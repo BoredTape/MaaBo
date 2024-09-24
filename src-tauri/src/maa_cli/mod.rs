@@ -1,4 +1,3 @@
-mod consts;
 mod init;
 mod run;
 mod utils;

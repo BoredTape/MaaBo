@@ -1,6 +1,8 @@
 use std::{fs, path::PathBuf};
 
 use directories;
+use flate2::read::GzDecoder;
+use tar::Archive;
 
 use crate::consts;
 use crate::errors::Error;
@@ -19,6 +21,17 @@ pub fn make_dir_exist(path: &PathBuf) -> Result<(), Error> {
         return Err(Error::FailCreateDir(path.display().to_string()));
     }
     Ok(())
+}
+
+pub fn extract(src: &str, dst: &str) {
+    let file = std::fs::File::open(src).unwrap();
+    if src.ends_with(".tar.gz") {
+        Archive::new(GzDecoder::new(file)).unpack(dst).unwrap();
+    } else if src.ends_with(".zip") {
+        zip_extract::extract(file, &PathBuf::from(dst), true).unwrap();
+    } else {
+        panic!("文件 {} 无法解压", src);
+    }
 }
 
 pub async fn fetch_online_version() -> String {

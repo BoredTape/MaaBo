@@ -80,7 +80,7 @@ pub async fn deploy_latest(tx: Sender<(i32, String)>) -> Result<(), String> {
     tx.send((pconsts::SUCCESS, format!("下载完成,解压文件").to_string()))
         .unwrap_or_else(|err| log::error!("{}", err.to_string()));
 
-    maa_utils::extract(
+    utils::extract(
         file_path.to_str().unwrap(),
         temp_dir.path().to_str().unwrap(),
     );

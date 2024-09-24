@@ -4,17 +4,19 @@ use std::io::{BufRead, BufReader, Error, Read};
 use std::process::{Child, Command};
 use std::{env, path::PathBuf};
 
-use flate2::read::GzDecoder;
 use serde::{Deserialize, Serialize};
-use tar::Archive;
 
+use crate::consts;
 use crate::errors::Error as CError;
-use crate::maa_cli::consts;
 use crate::utils::get_user_dir;
 use crate::version;
 
 pub fn name() -> String {
     return consts::MAA_CLI_NAME.to_string() + env::consts::EXE_SUFFIX;
+}
+
+pub fn config_name() -> String {
+    consts::MAA_CLI_CONFIG_NAME.to_string()
 }
 
 pub fn core_lib_name() -> String {
@@ -24,14 +26,18 @@ pub fn core_lib_name() -> String {
     return consts::MAA_CORE_LIB_NAME.to_string() + env::consts::DLL_SUFFIX;
 }
 
-pub fn config_name() -> String {
-    consts::MAA_CLI_CONFIG_NAME.to_string()
-}
-
 pub fn dir() -> PathBuf {
     let mut p = get_user_dir().unwrap();
-    p = p.join(consts::MAA_CLI_DIR);
+    p = p.join(consts::MAABO_DIR);
     return p;
+}
+
+pub fn core_config_dir() -> PathBuf {
+    config_dir().join(consts::MAA_CORE_CONFIG_DIR)
+}
+
+pub fn core_default_config_name() -> String {
+    consts::MAA_CORE_DEFAULT_CONFIG_NAME.to_string()
 }
 
 pub fn config_dir() -> PathBuf {
@@ -62,27 +68,8 @@ pub fn task_dir() -> PathBuf {
     config_dir().join(consts::MAA_CLI_CONFIG_TASK_DIR)
 }
 
-pub fn core_config_dir() -> PathBuf {
-    config_dir().join(consts::MAA_CORE_CONFIG_DIR)
-}
-
-pub fn core_default_config_name() -> String {
-    consts::MAA_CORE_DEFAULT_CONFIG_NAME.to_string()
-}
-
 pub fn default_task_name() -> String {
     consts::MAA_CLI_TASK_DEFAULT_CONFIG_NAME.to_string()
-}
-
-pub fn extract(src: &str, dst: &str) {
-    let file = std::fs::File::open(src).unwrap();
-    if src.ends_with(".tar.gz") {
-        Archive::new(GzDecoder::new(file)).unpack(dst).unwrap();
-    } else if src.ends_with(".zip") {
-        zip_extract::extract(file, &PathBuf::from(dst), true).unwrap();
-    } else {
-        panic!("文件 {} 无法解压", src);
-    }
 }
 
 fn cli_command(clitent_name: &str, args: Vec<&str>) -> Result<(os_pipe::PipeReader, Child), Error> {

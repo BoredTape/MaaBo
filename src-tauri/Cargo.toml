@@ -44,6 +44,7 @@ thiserror = "1.0.63"
 semver = "1.0.23"
 log = "0.4.22"
 log4rs = "1.2.0"
+run_script = "0.10.1"
 
 [features]
 # this feature is used for production builds or when `devPath` points to the filesystem and the built-in dev server is disabled.

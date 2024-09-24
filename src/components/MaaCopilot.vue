@@ -4,7 +4,7 @@
       <div class="table-box">
         <el-row style="text-align: center">
           <el-col>
-            <el-input v-model="uri" style="width: 160px" />
+            <el-input v-model="rt.copilot_path" style="width: 160px" />
             <el-button-group>
               <el-button :icon="FolderOpened" plain @click="SelectFile" />
               <el-button :icon="DocumentCopy" plain @click="Copy" />
@@ -94,11 +94,10 @@ const SelectFile = async () => {
     ]
   })
   if (selected) {
-    uri.value = selected.toString()
+    rt.copilot_path = selected.toString()
   }
 }
 
-const uri = ref('')
 const autoFormation = ref(false)
 const scrollbarRef = ref<InstanceType<typeof ElScrollbar>>()
 const changeText = () => {
@@ -110,7 +109,7 @@ const changeText = () => {
 const Copy = async () => {
   const text = await readText()
   if (text) {
-    uri.value = text
+    rt.copilot_path = text
   }
 }
 
@@ -134,12 +133,9 @@ const start = async () => {
       changeText()
     })
     rt.copilot_listen = unlisten
-    await StartCopilot(config.name, uri.value, autoFormation.value)
+    await StartCopilot(config.name, rt.copilot_path, autoFormation.value)
   } else if (config.status === 1) {
     await Stop(config.name)
-    // if (runningTime.GetCopilotListen(config.value.name)) {
-    //   runningTime.GetCopilotListen(config.value.name)!()
-    // }
     rt.copilot_listen!()
   }
 }

@@ -59,8 +59,9 @@ interface SettingDialog {
 }
 
 interface RunningTimeInfo {
-    setting_dialog: SettingDialog,
-    setting_index: number,
+    copilot_path: string
+    setting_dialog: SettingDialog
+    setting_index: number
     one_key_listen: UnlistenFn | null
     one_key_information: string[]
     copilot_listen: UnlistenFn | null
@@ -86,6 +87,7 @@ export const MaaBoRTStore = defineStore('MaaBoRT', () => {
     const GetMaaBoRT = (name: string) => {
         if (!rt.value[name]) {
             rt.value[name] = {
+                copilot_path: "",
                 setting_index: 0,
                 setting_dialog: {
                     "MaaCore": false,
