@@ -98,7 +98,7 @@
         {{ config.status === 0 ? '嘻嘻' : '不嘻嘻' }}
       </el-button>
     </el-col>
-    <el-col :span="12" style="text-align: center; line-height: 38px">
+    <el-col :span="12" style="text-align: center; line-height: 35px">
       <el-tooltip effect="dark" content="MaaCore设置" placement="top-start">
         <el-button
           :icon="Setting"
@@ -111,7 +111,6 @@
         </el-button>
       </el-tooltip>
     </el-col>
-    <el-col :span="1"></el-col>
   </el-row>
   <el-dialog
     v-model="rt.setting_dialog['MaaCore']"
