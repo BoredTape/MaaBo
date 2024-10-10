@@ -39,7 +39,7 @@
   </el-tabs>
 </template>
 <script setup lang="ts">
-import { open } from '@tauri-apps/api/shell'
+import { open } from '@tauri-apps/plugin-shell'
 import { MaaBoConfigStore } from '@/stores/MaaBoConfig'
 import { MaaBoRTStore } from '@/stores/MaaBoRT'
 const maaboRTStore = MaaBoRTStore()

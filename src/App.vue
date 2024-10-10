@@ -66,7 +66,7 @@ import { listen } from '@tauri-apps/api/event'
 import moment from 'moment'
 import { ref, onMounted } from 'vue'
 import { UpdateMaaCli, IgnoreMaaCliUpdate } from './apis/Update'
-import { open } from '@tauri-apps/api/shell'
+import { open } from '@tauri-apps/plugin-shell'
 import { CheckMaaBoUpdate } from './apis/Version'
 import { MaaBoConfigStore } from './stores/MaaBoConfig'
 

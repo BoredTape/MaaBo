@@ -68,7 +68,7 @@
 <script setup lang="ts">
 import { onMounted, ref } from 'vue'
 import { FolderOpened, DocumentCopy } from '@element-plus/icons-vue'
-import { readText } from '@tauri-apps/api/clipboard'
+import { readText } from '@tauri-apps/plugin-clipboard-manager'
 import { open } from '@tauri-apps/api/dialog'
 import { listen } from '@tauri-apps/api/event'
 import { StartCopilot, Stop } from '@/apis/Run'

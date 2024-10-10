@@ -55,7 +55,7 @@ import { onMounted, ref } from 'vue'
 import { listen } from '@tauri-apps/api/event'
 import { ToolsExecute } from '@/apis/Tools'
 import { ElScrollbar } from 'element-plus'
-import { writeText } from '@tauri-apps/api/clipboard'
+import { writeText } from '@tauri-apps/plugin-clipboard-manager'
 const maaBoRTStore = MaaBoRTStore()
 const maaBoConfigStore = MaaBoConfigStore()
 const rt = maaBoRTStore.GetCurrentMaaBoRT()

@@ -1,4 +1,4 @@
-import { invoke } from '@tauri-apps/api/tauri'
+import { invoke } from '@tauri-apps/api/core'
 
 const ToolsExecute = async (name: string, tab: string, data: Object) => {
     let response: any
