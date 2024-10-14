@@ -14,6 +14,7 @@
   },
   "dependencies": {
     "@tauri-apps/plugin-clipboard-manager": "^2.0.0",
+    "@tauri-apps/plugin-notification": "^2.0.0",
     "@tauri-apps/plugin-shell": "^2.0.0",
     "element-plus": "^2.8.1",
     "moment": "^2.30.1",

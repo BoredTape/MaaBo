@@ -9,6 +9,7 @@
     "core:default",
     "clipboard-manager:default",
     "shell:default",
-    "shell:default"
+    "shell:default",
+    "notification:default"
   ]
 }
