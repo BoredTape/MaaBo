@@ -11,11 +11,6 @@ import { useRouter } from 'vue-router'
 import { listen } from '@tauri-apps/api/event'
 import { invoke } from '@tauri-apps/api/core'
 import moment from 'moment'
-import { MaaCliConfigStore } from '@/stores/MaaCLIConfig'
-import { PathInfoStore } from '@/stores/PathInfo'
-
-const cliConfig = MaaCliConfigStore()
-const pathInfo = PathInfoStore()
 
 const loadingText = ref('Loading')
 const loading = ElLoading.service({
@@ -43,11 +38,6 @@ const listen_init_msg = async () => {
     const date = moment(new Date(payload.ts)).format('YYYY-MM-DD HH:mm:ss')
 
     if (payload.code === 1) {
-      cliConfig.Load()
-
-      // userConfig.Load()
-
-      pathInfo.Load()
       unlisten()
       loading.close()
       router.push('/oneKey')

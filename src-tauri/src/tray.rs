@@ -8,6 +8,7 @@ use tauri_plugin_notification::NotificationExt;
 pub fn setup(app: &mut App) -> Result<()> {
     let quit_menu_item = MenuItem::with_id(app, "quit", "退出", true, None::<&str>)?;
     let visible_item = MenuItem::with_id(app, "visible", "最小化到托盘", true, None::<&str>)?;
+    let visible_item_clone = visible_item.clone();
     let tips_menu_item = MenuItem::with_id(app, "tips", "给我一个提示", true, None::<&str>)?;
 
     let menus = Menu::with_items(app, &[&tips_menu_item, &visible_item, &quit_menu_item])?;
@@ -25,10 +26,9 @@ pub fn setup(app: &mut App) -> Result<()> {
                 let app = tray.app_handle();
                 if let Some(window) = app.get_webview_window("main") {
                     if let Ok(()) = window.show() {
-                        // it just can't
-                        // visible_item
-                        //         .set_text("最小化到托盘")
-                        //         .unwrap_or_else(|err| log::info!("error:{}", err.to_string()));
+                        visible_item_clone
+                            .set_text("最小化到托盘")
+                            .unwrap_or_else(|err| log::info!("error:{}", err.to_string()));
                     }
                     let _ = window.set_focus();
                 }

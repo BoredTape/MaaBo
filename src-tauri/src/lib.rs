@@ -1,6 +1,9 @@
 use tauri::Manager;
 
+mod events;
 mod tray;
+
+use events::init_process;
 
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
@@ -39,6 +42,7 @@ pub fn run() {
             tray::setup(app)?;
             Ok(())
         })
+        .invoke_handler(tauri::generate_handler![init_process])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
 }
